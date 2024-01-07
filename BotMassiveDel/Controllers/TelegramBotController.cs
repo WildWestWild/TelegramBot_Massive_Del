@@ -1,17 +1,20 @@
-﻿using Infrastructure.TelegramBot.Helpers;
+﻿using Infrastructure.TelegramBot.Commands;
+using Infrastructure.TelegramBot.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BotMassiveDel.Controllers
 {
     public class TelegramBotController : Controller
     {
         [HttpPost("/Update")]
-        public async Task GetMessageFromBot([FromBody] Update update, [FromServices] ITelegramBotClient botClient,
+        public async Task GetMessageFromBot(
+            [FromBody] Update update,
+            [FromServices] IServiceProvider provider,
             CancellationToken token)
         {
+            //TODO: Сделать валидацию FluentValidation
             // Only process Message updates: https://core.telegram.org/bots/api#message
             if (update.Message is not { } message)
                 return;
@@ -23,12 +26,8 @@ namespace BotMassiveDel.Controllers
 
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
-            // Echo received message text
-            Message sentMessage = await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: "You said:\n" + messageText,
-                cancellationToken: token,
-                replyMarkup: KeyboardHelper.GetKeyboard());
+            var command = BaseCommand.FindCommand(provider, messageText);
+            await command.Process(update, token);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Infrastructure.TelegramBot.Options;
+﻿using Infrastructure.TelegramBot.Commands;
+using Infrastructure.TelegramBot.Options;
 using Infrastructure.TelegramBot.WorkerServices;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
@@ -12,7 +13,9 @@ namespace Infrastructure.TelegramBot
         
         public static void AddTelegramBot(this IServiceCollection services, BotOptions botOptions)
         {
-            
+
+            #region Init_Telegram_Bot
+
             _pathToBotToken = Path.Combine(Directory.GetCurrentDirectory(), botOptions.BotTokenFileName) 
                               ?? throw new ArgumentNullException(nameof(_pathToBotToken));
             
@@ -20,11 +23,11 @@ namespace Infrastructure.TelegramBot
                                  ?? throw new ArgumentNullException(nameof(_pathToSecretToken));
             
             services.AddHttpClient<ITelegramBotClient>("telegram_bot_client")
-                    .AddTypedClient<ITelegramBotClient>(client =>
-                    {
-                        var botToken = File.ReadAllText(_pathToBotToken);
-                        return new TelegramBotClient(botToken, client);
-                    });
+                .AddTypedClient<ITelegramBotClient>(client =>
+                {
+                    var botToken = File.ReadAllText(_pathToBotToken);
+                    return new TelegramBotClient(botToken, client);
+                });
             
             
             services.AddHostedService(provider =>
@@ -34,7 +37,15 @@ namespace Infrastructure.TelegramBot
                 var telegramClient = provider.GetRequiredService<ITelegramBotClient>();
                 return new ConfigureWebhookWorkerService(secretToken, webhookAddress, telegramClient);
             });
-            
+
+            #endregion
+
+            #region Init_Commands
+
+            services.AddTransient<NotFoundCommand>();
+            services.AddTransient<DescriptionCommand>();
+
+            #endregion
         }
     }
 }
