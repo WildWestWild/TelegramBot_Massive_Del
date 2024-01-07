@@ -5,13 +5,12 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BotMassiveDel.Controllers
 {
-    public class TelegramBotController: Controller
+    public class TelegramBotController : Controller
     {
         [HttpPost("/Update")]
-        public async Task GetMessageFromBot([FromBody] Update update, [FromServices] ITelegramBotClient botClient, CancellationToken token)
+        public async Task GetMessageFromBot([FromBody] Update update, [FromServices] ITelegramBotClient botClient,
+            CancellationToken token)
         {
-            if (update == null)
-                return;
             // Only process Message updates: https://core.telegram.org/bots/api#message
             if (update.Message is not { } message)
                 return;
@@ -26,21 +25,21 @@ namespace BotMassiveDel.Controllers
             var replyKeyboard = new ReplyKeyboardMarkup(
                 new List<KeyboardButton[]>()
                 {
-            new KeyboardButton[]
-            {
-                new("Покажи список \n (Имя списка)"),
-                new("Создай новый список"),
-            },
-            new KeyboardButton[]
-            {
-                new("Добавь элемент"),
-                new("Вычеркни элемент")
-            },
-            new KeyboardButton[]
-            {
-                new("Удали элемент"),
-                new("Редактируй элемент")
-            }
+                    new KeyboardButton[]
+                    {
+                        new("Покажи список \n (Имя списка)"),
+                        new("Создай новый список"),
+                    },
+                    new KeyboardButton[]
+                    {
+                        new("Добавь элемент"),
+                        new("Вычеркни элемент")
+                    },
+                    new KeyboardButton[]
+                    {
+                        new("Удали элемент"),
+                        new("Редактируй элемент")
+                    }
                 })
             {
                 // автоматическое изменение размера клавиатуры, если не стоит true,
