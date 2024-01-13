@@ -1,3 +1,4 @@
+using Core.ListActions;
 using Infrastructure.TelegramBot;
 using Infrastructure.TelegramBot.Options;
 
@@ -18,6 +19,8 @@ builder.Services.AddTelegramBot(
         .Get<BotOptions>()
     ?? throw new ArgumentNullException(nameof(BotOptions))
     );
+
+builder.Services.AddListActions();
 
 var app = builder.Build();
 
