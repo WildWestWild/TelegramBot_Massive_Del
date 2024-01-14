@@ -3,6 +3,10 @@
     public class UserListInfo
     {
         /// <summary>
+        /// Идентификатор для джойнов
+        /// </summary>
+        public long Id { get; set; }
+        /// <summary>
         /// Идентификатор чатов (ChatId)
         /// </summary>
         public long ChatId { get; set; }

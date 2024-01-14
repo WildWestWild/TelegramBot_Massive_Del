@@ -20,20 +20,20 @@ namespace Infrastructure.Storage
             // Настройка сущности UserListInfo
             modelBuilder.Entity<UserListInfo>(entity =>
             {
-                // Установка составного ключа из ChatId и Name
-                entity.HasKey(userListInfo => new { userListInfo.ChatId, userListInfo.Name });
-
-                // Установка внешнего ключа для связи с UserListElements
-                entity.HasMany(userListInfo => userListInfo.UserListElements)
-                    .WithOne(userListElements => userListElements.UserListInfo)
-                    .HasForeignKey(userListElements => userListElements.UserListInfoId);
+                entity.HasKey(userListInfo => userListInfo.Id);
+                entity.Property(userListInfo => userListInfo.Id).ValueGeneratedOnAdd();
+                entity.HasIndex(userListInfo => new { userListInfo.ChatId, userListInfo.Name })
+                    .IsUnique();
             });
 
             // Настройка сущности UserListElements
             modelBuilder.Entity<UserListElement>(entity =>
             {
                 entity.HasKey(userListElements => userListElements.Id);
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(userListElements => userListElements.Id).ValueGeneratedOnAdd();
+                entity.HasOne(e => e.UserListInfo)
+                        .WithMany(i => i.UserListElements)
+                        .HasForeignKey(e => e.UserListInfoId);
             });
         }
     }

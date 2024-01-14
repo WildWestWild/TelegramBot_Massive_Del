@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotMassiveDel", "BotMassive
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.TelegramBot", "..\Infrastructure.TelegramBot\Infrastructure.TelegramBot.csproj", "{D1E63071-ADC7-4851-A210-C33BC8F58736}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.ListActions", "..\Core.ListActions\Core.ListActions.csproj", "{0203E968-4C23-4B48-B1CB-E94C7725CD55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.ListActions", "..\Core.ListActions\Core.ListActions.csproj", "{0203E968-4C23-4B48-B1CB-E94C7725CD55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Storage", "..\Infrastructure.Storage\Infrastructure.Storage.csproj", "{CE1B6D76-E1F8-4428-9928-88B9E57E1513}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Storage", "..\Infrastructure.Storage\Infrastructure.Storage.csproj", "{CE1B6D76-E1F8-4428-9928-88B9E57E1513}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.xUnit", "..\Tests.xUnit\Tests.xUnit.csproj", "{9EE06B46-65B1-4FAE-9A51-EDD07D255053}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{CE1B6D76-E1F8-4428-9928-88B9E57E1513}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE1B6D76-E1F8-4428-9928-88B9E57E1513}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE1B6D76-E1F8-4428-9928-88B9E57E1513}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EE06B46-65B1-4FAE-9A51-EDD07D255053}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EE06B46-65B1-4FAE-9A51-EDD07D255053}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EE06B46-65B1-4FAE-9A51-EDD07D255053}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EE06B46-65B1-4FAE-9A51-EDD07D255053}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -24,6 +24,7 @@ public class AddListAction
             {
                 ChatId = command.ChatId,
                 Name = command.Name,
+                CreateDate = DateTime.Now,
                 IsActiveContext = true
             });
 
