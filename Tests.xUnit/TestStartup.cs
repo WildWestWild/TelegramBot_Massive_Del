@@ -9,7 +9,7 @@ namespace Tests.xUnit
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddListActions();
+            services.AddListActions<DbTestContext>();
             services.AddLogging(lb =>
             {
                 lb.AddConsole();

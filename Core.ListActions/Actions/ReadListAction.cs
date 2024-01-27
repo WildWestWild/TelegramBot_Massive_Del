@@ -19,11 +19,11 @@ namespace Core.ListActions.Actions
             _logger = logger;
         }
 
-        public UserListElementDTO[]? GetList(ReadListCommand command)
+        public UserListElementDTO[]? GetList(ICommandIdentificator command)
         {
             try
             {
-                var userListInfo = AddUserInfoInContext(command);
+                var userListInfo = AddUserInfoWithElementsInContext(command);
                 
                 _logger.LogInformation($"[{nameof(GetList)}] List has existed. ChatId = {command.ChatId}, Name = {command.Name}");
                 
@@ -35,12 +35,18 @@ namespace Core.ListActions.Actions
                 return null;
             }
         }
-
+        
         internal UserListInfo AddUserInfoInContext(ICommandIdentificator identificator) =>
+            _db.UserListInfos
+                .First(record => record.ChatId == identificator.ChatId && record.Name == identificator.Name);
+
+        internal UserListInfo AddUserInfoWithElementsInContext(ICommandIdentificator identificator) =>
             _db.UserListInfos
                 .Include(
                     join => join.UserListElements.OrderBy(element => element.Number)
                 )
                 .First(record => record.ChatId.Equals(identificator.ChatId) && record.Name.Equals(identificator.Name));
+        
+        
     }
 }

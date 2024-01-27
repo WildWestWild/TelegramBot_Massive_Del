@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Storage.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Storage
 {
@@ -7,9 +8,13 @@ namespace Infrastructure.Storage
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=massive_del.db");
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder
+                    .UseLoggerFactory(LoggerFactory.Create(settings => settings.SetMinimumLevel(LogLevel.Information)))
+                    .UseSqlite(@"Data Source=massive_del.db");
+            }
         }
-
         public DbSet<UserListInfo> UserListInfos { get; set; }
 
         public DbSet<UserListElement> UserListElements { get; set; }

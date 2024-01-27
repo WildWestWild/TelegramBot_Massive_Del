@@ -1,4 +1,5 @@
 using Core.ListActions;
+using Infrastructure.Storage;
 using Infrastructure.TelegramBot;
 using Infrastructure.TelegramBot.Options;
 
@@ -20,7 +21,7 @@ builder.Services.AddTelegramBot(
     ?? throw new ArgumentNullException(nameof(BotOptions))
     );
 
-builder.Services.AddListActions();
+builder.Services.AddListActions<MassiveDelDbContext>();
 
 var app = builder.Build();
 
