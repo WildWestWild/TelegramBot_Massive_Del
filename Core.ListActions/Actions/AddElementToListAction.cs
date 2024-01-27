@@ -19,11 +19,11 @@ public class AddElementToListAction
         _logger = logger;
     }
 
-    public bool AddElement(AddElementCommand command)
+    public async Task<bool> AddElement(AddOrUpdateElementCommand command, CancellationToken token)
     {
         try
         {
-            var userListInfo = _readListAction.AddUserInfoInContext(command);
+            var userListInfo = await _readListAction.AddUserInfoInContext(command);
             _db.UserListElements.Add(new UserListElement
             {
                 UserListInfoId = userListInfo.Id,
@@ -31,7 +31,7 @@ public class AddElementToListAction
                 Data = command.Data
             });
 
-            return _db.SaveChanges() > 0;
+            return await _db.SaveChangesAsync(token) > 0;
         }
         catch (Exception e)
         {

@@ -19,11 +19,11 @@ namespace Core.ListActions.Actions
             _logger = logger;
         }
 
-        public UserListElementDTO[]? GetList(ICommandIdentificator command)
+        public async Task<UserListElementDTO[]?> GetList(ICommandIdentificator command, CancellationToken token)
         {
             try
             {
-                var userListInfo = AddUserInfoWithElementsInContext(command);
+                var userListInfo = await AddUserInfoWithElementsInContext(command);
                 
                 _logger.LogInformation($"[{nameof(GetList)}] List has existed. ChatId = {command.ChatId}, Name = {command.Name}");
                 
@@ -36,16 +36,16 @@ namespace Core.ListActions.Actions
             }
         }
         
-        internal UserListInfo AddUserInfoInContext(ICommandIdentificator identificator) =>
+        internal Task<UserListInfo> AddUserInfoInContext(ICommandIdentificator identificator) =>
             _db.UserListInfos
-                .First(record => record.ChatId == identificator.ChatId && record.Name == identificator.Name);
+                .FirstAsync(record => record.ChatId.Equals(identificator.ChatId) && record.Name.Equals(identificator.Name));
 
-        internal UserListInfo AddUserInfoWithElementsInContext(ICommandIdentificator identificator) =>
+        internal Task<UserListInfo> AddUserInfoWithElementsInContext(ICommandIdentificator identificator) =>
             _db.UserListInfos
                 .Include(
                     join => join.UserListElements.OrderBy(element => element.Number)
                 )
-                .First(record => record.ChatId.Equals(identificator.ChatId) && record.Name.Equals(identificator.Name));
+                .FirstAsync(record => record.ChatId.Equals(identificator.ChatId) && record.Name.Equals(identificator.Name));
         
         
     }

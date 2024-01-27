@@ -11,6 +11,6 @@ namespace Infrastructure.Storage
 
         public DbSet<UserListElement> UserListElements { get; }
 
-        public int SaveChanges();
+        Task<int> SaveChangesAsync(CancellationToken token);
     }
 }

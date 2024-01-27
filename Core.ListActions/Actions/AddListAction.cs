@@ -16,7 +16,7 @@ public class AddListAction
         _logger = logger;
     }
 
-    public bool AddList(AddListCommand command)
+    public async Task<bool> AddList(AddListCommand command, CancellationToken token)
     {
         try
         {
@@ -28,7 +28,7 @@ public class AddListAction
                 IsActiveContext = true
             });
 
-            return _db.SaveChanges() > 0;
+            return await _db.SaveChangesAsync(token) > 0;
         }
         catch (Exception e)
         {
