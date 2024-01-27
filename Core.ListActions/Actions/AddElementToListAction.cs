@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.ListActions.Actions;
 
-public class AddElementToListAction
+public class AddElementToListAction: BaseAction
 {
     private readonly IDbContext _db;
     private readonly ReadListAction _readListAction;
@@ -23,13 +23,18 @@ public class AddElementToListAction
     {
         try
         {
-            var userListInfo = await _readListAction.AddUserInfoInContext(command);
+            var userListInfo = await _readListAction.AddUserInfoWithElementsInContext(command, token);
             _db.UserListElements.Add(new UserListElement
             {
                 UserListInfoId = userListInfo.Id,
                 Number = command.Number,
                 Data = command.Data
             });
+
+            AfterCommandAction += (identificator) =>
+            {
+                _readListAction.ResetCache(identificator);
+            };
 
             return await _db.SaveChangesAsync(token) > 0;
         }

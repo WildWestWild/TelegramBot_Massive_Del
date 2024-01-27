@@ -4,18 +4,22 @@ using Core.ListActions.DTO;
 using Core.ListActions.Extensions;
 using Infrastructure.Storage.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace Core.ListActions.Actions
 {
-    public class ReadListAction
+    public class ReadListAction: BaseAction
     {
         private readonly IDbContext _db;
+        private readonly IMemoryCache _cache;
         private readonly ILogger<ReadListAction> _logger;
+        private readonly TimeSpan _cacheTime = TimeSpan.FromMinutes(5);
 
-        public ReadListAction(IDbContext db, ILogger<ReadListAction> logger)
+        public ReadListAction(IDbContext db, IMemoryCache cache, ILogger<ReadListAction> logger)
         {
             _db = db;
+            _cache = cache;
             _logger = logger;
         }
 
@@ -23,11 +27,16 @@ namespace Core.ListActions.Actions
         {
             try
             {
-                var userListInfo = await AddUserInfoWithElementsInContext(command);
+                if (_cache.TryGetValue(command.GetCommandKey(), out UserListElementDTO[]? dtos))
+                {
+                    return dtos;
+                }
+                
+                await AddUserInfoWithElementsInContext(command, token);
                 
                 _logger.LogInformation($"[{nameof(GetList)}] List has existed. ChatId = {command.ChatId}, Name = {command.Name}");
-                
-                return userListInfo.UserListElements.GetDtos();
+
+                return ResetCache(command);
             }
             catch (InvalidOperationException e)
             {
@@ -35,18 +44,19 @@ namespace Core.ListActions.Actions
                 return null;
             }
         }
-        
-        internal Task<UserListInfo> AddUserInfoInContext(ICommandIdentificator identificator) =>
-            _db.UserListInfos
-                .FirstAsync(record => record.ChatId.Equals(identificator.ChatId) && record.Name.Equals(identificator.Name));
 
-        internal Task<UserListInfo> AddUserInfoWithElementsInContext(ICommandIdentificator identificator) =>
+        internal Task<UserListInfo> AddUserInfoWithElementsInContext(ICommandIdentificator identificator, CancellationToken token) =>
             _db.UserListInfos
                 .Include(
                     join => join.UserListElements.OrderBy(element => element.Number)
                 )
-                .FirstAsync(record => record.ChatId.Equals(identificator.ChatId) && record.Name.Equals(identificator.Name));
-        
-        
+                .FirstAsync(record => record.ChatId.Equals(identificator.ChatId) && record.Name.Equals(identificator.Name), cancellationToken: token);
+
+        internal UserListElementDTO[] ResetCache(ICommandIdentificator identificator)
+        {
+            var dtos = _db.UserListElements.Local.GetDtos();
+            _cache.Set(identificator.GetCommandKey(), dtos, _cacheTime);
+            return dtos;
+        }
     }
 }

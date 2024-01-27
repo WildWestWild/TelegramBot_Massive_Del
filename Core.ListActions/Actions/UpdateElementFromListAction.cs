@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.ListActions.Actions;
 
-public class UpdateElementFromListAction
+public class UpdateElementFromListAction: BaseAction
 {
     private readonly IDbContext _db;
     private readonly ReadListAction _readListAction;
@@ -22,9 +22,15 @@ public class UpdateElementFromListAction
     {
         try
         {
-            await _readListAction.AddUserInfoWithElementsInContext(command);
+            await _readListAction.AddUserInfoWithElementsInContext(command, token);
             var element = _db.UserListElements.First(r => r.Number.Equals(command.Number));
             element.Data = command.Data;
+            
+            AfterCommandAction += (identificator) =>
+            {
+                _readListAction.ResetCache(identificator);
+            };
+            
             return await _db.SaveChangesAsync(token) > 0;
         }
         catch (Exception e)

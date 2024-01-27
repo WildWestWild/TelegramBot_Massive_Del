@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.ListActions.Actions;
 
-public class AddListAction
+public class AddListAction: BaseAction
 {
     private readonly IDbContext _db;
     private readonly ILogger<AddListAction> _logger;
@@ -27,7 +27,7 @@ public class AddListAction
                 CreateDate = DateTime.Now,
                 IsActiveContext = true
             });
-
+            
             return await _db.SaveChangesAsync(token) > 0;
         }
         catch (Exception e)

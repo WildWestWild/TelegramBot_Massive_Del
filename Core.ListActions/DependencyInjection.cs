@@ -9,6 +9,7 @@ public static class DependencyInjection
     public static void AddListActions<T>(this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Scoped) where T: MassiveDelDbContext
     {
         serviceCollection.AddDbContext<IDbContext, T>(lifetime);
+        serviceCollection.AddMemoryCache();
         
         serviceCollection.AddTransient<AddListAction>();
         serviceCollection.AddTransient<ReadListAction>();

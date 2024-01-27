@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.ListActions.Actions;
 
-public class DeleteElementFromListAction
+public class DeleteElementFromListAction: BaseAction
 {
     private readonly IDbContext _db;
     private readonly ReadListAction _readListAction;
@@ -21,12 +21,17 @@ public class DeleteElementFromListAction
     {
         try
         {
-            var userInfo = await _readListAction.AddUserInfoWithElementsInContext(command);
+            var userInfo = await _readListAction.AddUserInfoWithElementsInContext(command, token);
             
             _db.UserListElements.Remove(
                 userInfo.UserListElements.First(
                     r=>r.Number.Equals(command.Number))
             );
+            
+            AfterCommandAction += (identificator) =>
+            {
+                _readListAction.ResetCache(identificator);
+            };
 
             return await _db.SaveChangesAsync(token) > 0;
         }

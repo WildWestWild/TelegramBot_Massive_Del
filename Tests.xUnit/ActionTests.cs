@@ -63,12 +63,14 @@ namespace Tests.xUnit
                     Data = "1"
                 }, _cancellationTokenSource.Token);
             }
+            _addElementToListAction.OnAfterCommandAction(Command);
 
             var addElementResult = await _readListAction.GetList(Command, _cancellationTokenSource.Token);
+            _logger.LogInformation("Create start");
             Assert.NotNull(addElementResult);
             Assert.Equal(10, addElementResult.Length);
             Assert.Equal(10, addElementResult.Select(r=> Convert.ToInt32(r.Data)).Sum());
-
+            _logger.LogInformation("Create done");
             #endregion
 
             #region Update
@@ -83,11 +85,14 @@ namespace Tests.xUnit
                     Data = "2"
                 }, _cancellationTokenSource.Token);
             }
+            _updateElementFromListAction.OnAfterCommandAction(Command);
             
             var updateElementResult = await _readListAction.GetList(Command, _cancellationTokenSource.Token);
+            _logger.LogInformation("Update start");
             Assert.NotNull(updateElementResult);
             Assert.Equal(10, updateElementResult.Length);
             Assert.Equal(20, updateElementResult.Select(r=> Convert.ToInt32(r.Data)).Sum());
+            _logger.LogInformation("Update done");
             #endregion
             
             #region Delete
@@ -101,11 +106,13 @@ namespace Tests.xUnit
                     Number = number
                 }, _cancellationTokenSource.Token);
             }
+            _deleteElementFromListAction.OnAfterCommandAction(Command);
             
             var deleteActionResult = await _readListAction.GetList(Command, _cancellationTokenSource.Token);
+            _logger.LogInformation("Delete start");
             Assert.NotNull(deleteActionResult);
             Assert.Equal(0, deleteActionResult.Length);
-
+            _logger.LogInformation("Delete done");
             #endregion
         }
     }
