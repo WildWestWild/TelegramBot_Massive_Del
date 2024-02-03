@@ -9,11 +9,11 @@ public class NotFoundCommand: BaseCommand
     {
     }
     
-    public override Task Process(Update update, CancellationToken token)
+    public override Task Process(long chatId, CancellationToken token)
     {
         Message =
-            $"Извините, но \"{update.Message!.Text}\" - это неизвестная для меня команда, пожалуйста, введите команду из меню, либо с виртуальной клавиатуры.";
+            "Извините, но это неизвестная для меня команда, пожалуйста, введите команду из меню, либо с виртуальной клавиатуры.";
         
-        return base.Process(update, token);
+        return base.Process(chatId, token);
     }
 }

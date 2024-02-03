@@ -4,6 +4,12 @@ namespace Infrastructure.TelegramBot.Helpers;
 
 public static class KeyboardHelper
 {
+    public const string NewListText = "Создай новый список";
+    public static readonly string AddElementText = "Добавь элемент";
+    public static readonly string DeleteElementText = "Удали элемент";
+    public static readonly string UpdateElementText = "Редактируй элемент";
+    public static readonly string CopyLinkText = "Скопируй ссылку на список";
+
     public static ReplyKeyboardMarkup GetKeyboard(string? listName = null)
     {
         return string.IsNullOrEmpty(listName)
@@ -12,7 +18,7 @@ public static class KeyboardHelper
                     {
                         new KeyboardButton[]
                         {
-                            new("Создай новый список")
+                            new(NewListText)
                         }
                     })
                 { ResizeKeyboard = true }
@@ -22,21 +28,21 @@ public static class KeyboardHelper
                         new KeyboardButton[]
                         {
                             new($"Покажи список \n ({listName})"),
-                            new("Создай новый список")
+                            new(NewListText)
                         },
                         new KeyboardButton[]
                         {
-                            new("Добавь элемент"),
+                            new(AddElementText),
                             new("Вычеркни элемент")
                         },
                         new KeyboardButton[]
                         {
-                            new("Удали элемент"),
-                            new("Редактируй элемент")
+                            new(DeleteElementText),
+                            new(UpdateElementText)
                         },
                         new KeyboardButton[]
                         {
-                            new("Скопируй ссылку на список")
+                            new(CopyLinkText)
                         }
                     })
                 { ResizeKeyboard = true };

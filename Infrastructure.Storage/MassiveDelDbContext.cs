@@ -18,11 +18,11 @@ namespace Infrastructure.Storage
         public DbSet<UserListInfo> UserListInfos { get; set; }
 
         public DbSet<UserListElement> UserListElements { get; set; }
-
-
+        
+        public DbSet<UserContext> UserContexts { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Настройка сущности UserListInfo
             modelBuilder.Entity<UserListInfo>(entity =>
             {
                 entity.HasKey(userListInfo => userListInfo.Id);
@@ -30,8 +30,7 @@ namespace Infrastructure.Storage
                 entity.HasIndex(userListInfo => new { userListInfo.ChatId, userListInfo.Name })
                     .IsUnique();
             });
-
-            // Настройка сущности UserListElements
+            
             modelBuilder.Entity<UserListElement>(entity =>
             {
                 entity.HasKey(userListElements => userListElements.Id);
@@ -39,6 +38,11 @@ namespace Infrastructure.Storage
                 entity.HasOne(e => e.UserListInfo)
                         .WithMany(i => i.UserListElements)
                         .HasForeignKey(e => e.UserListInfoId);
+            });
+            
+            modelBuilder.Entity<UserContext>(entity =>
+            {
+                entity.HasKey(userContext => new { userContext.ChatId, userContext.UserListInfoId });
             });
         }
     }

@@ -1,4 +1,5 @@
-﻿using Infrastructure.TelegramBot.Commands;
+﻿using Infrastructure.TelegramBot;
+using Infrastructure.TelegramBot.Commands;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
 
@@ -6,10 +7,16 @@ namespace BotMassiveDel.Controllers
 {
     public class TelegramBotController : Controller
     {
+        private readonly CommandFactory _commandFactory;
+
+        public TelegramBotController(CommandFactory commandFactory)
+        {
+            _commandFactory = commandFactory;
+        }
+        
         [HttpPost("/Update")]
         public async Task GetMessageFromBot(
             [FromBody] Update update,
-            [FromServices] IServiceProvider provider,
             CancellationToken token)
         {
             //TODO: Сделать валидацию FluentValidation
@@ -24,8 +31,12 @@ namespace BotMassiveDel.Controllers
 
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
-            var command = BaseCommand.FindCommand(provider, messageText);
-            await command.Process(update, token);
+            var command = await _commandFactory.CreateCommand(messageText, chatId, token);
+            await command.Process(chatId, token);
+            if (command is BaseCommandWithContext commandWithContext)
+            {
+                commandWithContext.OnAfterCommandEvent();
+            }
         }
     }
 }

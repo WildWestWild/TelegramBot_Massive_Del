@@ -10,6 +10,8 @@ namespace Infrastructure.Storage
         public DbSet<UserListInfo> UserListInfos { get; }
 
         public DbSet<UserListElement> UserListElements { get; }
+        
+        public DbSet<UserContext> UserContexts { get; }
 
         Task<int> SaveChangesAsync(CancellationToken token);
     }

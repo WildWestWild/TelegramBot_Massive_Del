@@ -42,10 +42,17 @@ namespace Infrastructure.TelegramBot
 
             #region Init_Commands
 
-            services.AddTransient<NotFoundCommand>();
-            services.AddTransient<DescriptionCommand>();
+            AddTelegramBotCommands(services);
 
             #endregion
+        }
+
+        public static void AddTelegramBotCommands(this IServiceCollection services)
+        {
+            services.AddTransient<CommandFactory>();
+            services.AddTransient<ContextManager>();
+            services.AddTransient<NotFoundCommand>();
+            services.AddTransient<DescriptionCommand>();
         }
     }
 }
