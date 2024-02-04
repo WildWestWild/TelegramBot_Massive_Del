@@ -8,9 +8,9 @@ public class UserContext
     public long ChatId { get; set; }
     
     /// <summary>
-    /// Идентификатор для джойнов
+    /// Название списка для вывода меню
     /// </summary>
-    public long UserListInfoId { get; set; }
+    public string? ListName { get; set; }
     
     /// <summary>
     /// Является ли активным данный список?

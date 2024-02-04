@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Core.ListActions\Core.ListActions.csproj" />
     <ProjectReference Include="..\Infrastructure.Storage\Infrastructure.Storage.csproj" />
   </ItemGroup>
 

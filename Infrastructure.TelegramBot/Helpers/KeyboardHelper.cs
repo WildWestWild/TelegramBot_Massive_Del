@@ -10,41 +10,44 @@ public static class KeyboardHelper
     public static readonly string UpdateElementText = "Редактируй элемент";
     public static readonly string CopyLinkText = "Скопируй ссылку на список";
 
-    public static ReplyKeyboardMarkup GetKeyboard(string? listName = null)
+    public static ReplyKeyboardMarkup GetKeyboard(string listName)
     {
-        return string.IsNullOrEmpty(listName)
-            ? new ReplyKeyboardMarkup(
-                    new List<KeyboardButton[]>()
+        return new ReplyKeyboardMarkup(
+                new List<KeyboardButton[]>()
+                {
+                    new KeyboardButton[]
                     {
-                        new KeyboardButton[]
-                        {
-                            new(NewListText)
-                        }
-                    })
-                { ResizeKeyboard = true }
-            : new ReplyKeyboardMarkup(
-                    new List<KeyboardButton[]>()
+                        new($"Покажи список \n ({listName})"),
+                        new(NewListText)
+                    },
+                    new KeyboardButton[]
                     {
-                        new KeyboardButton[]
-                        {
-                            new($"Покажи список \n ({listName})"),
-                            new(NewListText)
-                        },
-                        new KeyboardButton[]
-                        {
-                            new(AddElementText),
-                            new("Вычеркни элемент")
-                        },
-                        new KeyboardButton[]
-                        {
-                            new(DeleteElementText),
-                            new(UpdateElementText)
-                        },
-                        new KeyboardButton[]
-                        {
-                            new(CopyLinkText)
-                        }
-                    })
-                { ResizeKeyboard = true };
+                        new(AddElementText),
+                        new("Вычеркни элемент")
+                    },
+                    new KeyboardButton[]
+                    {
+                        new(DeleteElementText),
+                        new(UpdateElementText)
+                    },
+                    new KeyboardButton[]
+                    {
+                        new(CopyLinkText)
+                    }
+                })
+            { ResizeKeyboard = true };
+    }
+
+    public static ReplyKeyboardMarkup GetKeyboard()
+    {
+        return new ReplyKeyboardMarkup(
+                new List<KeyboardButton[]>()
+                {
+                    new KeyboardButton[]
+                    {
+                        new(NewListText)
+                    }
+                })
+            { ResizeKeyboard = true };
     }
 }

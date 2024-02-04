@@ -42,7 +42,7 @@ namespace Infrastructure.Storage
             
             modelBuilder.Entity<UserContext>(entity =>
             {
-                entity.HasKey(userContext => new { userContext.ChatId, userContext.UserListInfoId });
+                entity.HasKey(userContext => userContext.ChatId);
             });
         }
     }

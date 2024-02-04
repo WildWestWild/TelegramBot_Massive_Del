@@ -1,19 +1,18 @@
 ﻿using Infrastructure.Storage.Models;
-using Infrastructure.TelegramBot.Helpers;
 using Telegram.Bot;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Infrastructure.TelegramBot.Commands;
 
 public abstract class BaseCommand
 {
     private readonly ITelegramBotClient _botClient;
-    
-    protected string? ListName { get; set; }
     protected UserContext? UserContext { get; private set; }
+    protected ReplyKeyboardMarkup KeyboardMarkup { get; set; }
     protected event Action? AfterCommandEvent;
     protected readonly ContextManager ContextManager;
     public string Message { get; protected set; }
-    
+
     public BaseCommand(ITelegramBotClient botClient, ContextManager contextManager)
     {
         _botClient = botClient;
@@ -25,13 +24,13 @@ public abstract class BaseCommand
         AfterCommandEvent?.Invoke();
     }
 
-    public virtual async Task Process(long chatId, CancellationToken token)
+    public virtual Task Process(long chatId, CancellationToken token)
     {
-        await _botClient.SendTextMessageAsync(
+        return _botClient.SendTextMessageAsync(
             chatId: chatId,
             text: Message,
             cancellationToken: token,
-            replyMarkup: KeyboardHelper.GetKeyboard(ListName));
+            replyMarkup: KeyboardMarkup);
     }
     
     /// <summary>
@@ -39,7 +38,7 @@ public abstract class BaseCommand
     /// </summary>
     /// <param name="context"></param>
     internal void SetContext(UserContext? context) => UserContext = context;
-    
+
     protected void AddEventToRemoveContext(CancellationToken token)
     {
         if (UserContext is not null)

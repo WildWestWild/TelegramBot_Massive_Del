@@ -16,8 +16,6 @@ public class CommandFactory
     
     public async ValueTask<BaseCommand> CreateCommand(string commandName, long charId, CancellationToken token)
     {
-        
-
         var userContext = await _contextManager.GetContext(charId, token);
 
         if (userContext is not null && CreateReadListCommand(commandName, userContext, out var readListCommand))
@@ -25,10 +23,13 @@ public class CommandFactory
             return readListCommand;
         }
         
-        var commandType = commandName.ToCommandType();
-        if (CreateCommand(commandType, userContext, out BaseCommand commandWithoutContext))
+        var commandType = commandName.ToCommandType() ?? GetCommandTypeByContext(userContext);
+        if (CreateCommand(commandType, userContext, out BaseCommand command))
         {
-            return commandWithoutContext;
+            if (userContext is not null && command is CreateListCommand addListCommand) 
+                addListCommand.SetListName(commandName);
+            
+            return command;
         }
 
         return CreateNotFoundCommand();
@@ -40,6 +41,7 @@ public class CommandFactory
         {
             CommandType.GetDescription => typeof(DescriptionCommand),
             CommandType.Start => typeof(StartCommand),
+            CommandType.CreateNewList => typeof(CreateListCommand),
             _ => null
         };
 
@@ -49,9 +51,8 @@ public class CommandFactory
             return false;
         }
 
-        BaseCommand commandWithContext = GetCommand(commandType);
-        commandWithContext.SetContext(context);
-        command = commandWithContext;
+        command = GetCommand(commandType);
+        command.SetContext(context);
         return true;
     }
     
@@ -63,8 +64,17 @@ public class CommandFactory
 
     private bool CreateReadListCommand(string commandName, UserContext context, out BaseCommand command)
     {
-        throw new NotImplementedException();
+        command = default;
+        return false;
     }
 
     private BaseCommand CreateNotFoundCommand() => GetCommand(typeof(NotFoundCommand));
+
+    private CommandType? GetCommandTypeByContext(UserContext? context)
+    {
+        if (context?.Command is null)
+            return null;
+
+        return (CommandType)context.Command;
+    }
 }

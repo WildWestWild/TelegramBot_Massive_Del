@@ -55,6 +55,7 @@ namespace Infrastructure.TelegramBot
             services.AddTransient<NotFoundCommand>();
             services.AddTransient<StartCommand>();
             services.AddTransient<DescriptionCommand>();
+            services.AddTransient<CreateListCommand>();
         }
     }
 }
