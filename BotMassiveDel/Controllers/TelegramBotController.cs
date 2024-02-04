@@ -1,5 +1,4 @@
-﻿using Infrastructure.TelegramBot;
-using Infrastructure.TelegramBot.Commands;
+﻿using Infrastructure.TelegramBot.Commands;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
 
@@ -33,10 +32,7 @@ namespace BotMassiveDel.Controllers
 
             var command = await _commandFactory.CreateCommand(messageText, chatId, token);
             await command.Process(chatId, token);
-            if (command is BaseCommandWithContext commandWithContext)
-            {
-                commandWithContext.OnAfterCommandEvent();
-            }
+            command.OnAfterCommandEvent();
         }
     }
 }

@@ -25,4 +25,10 @@ public class ContextManager
         userContext.Command = commandType as int?;
         await _db.SaveChangesAsync(token);
     }
+
+    public Task RemoveContext(UserContext userContext, CancellationToken token)
+    {
+        _db.UserContexts.Remove(userContext);
+        return _db.SaveChangesAsync(token);
+    }
 }

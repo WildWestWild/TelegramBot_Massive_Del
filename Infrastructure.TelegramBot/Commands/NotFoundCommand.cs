@@ -1,11 +1,10 @@
 ﻿using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace Infrastructure.TelegramBot.Commands;
 
 public class NotFoundCommand: BaseCommand
 {
-    public NotFoundCommand(ITelegramBotClient botClient) : base(botClient)
+    public NotFoundCommand(ITelegramBotClient botClient, ContextManager contextManager) : base(botClient, contextManager)
     {
     }
     

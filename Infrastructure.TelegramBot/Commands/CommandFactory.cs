@@ -16,11 +16,7 @@ public class CommandFactory
     
     public async ValueTask<BaseCommand> CreateCommand(string commandName, long charId, CancellationToken token)
     {
-        var commandType = commandName.ToCommandType();
-        if (CreateCommandWithoutContext(commandType, out var command))
-        {
-            return command;
-        }
+        
 
         var userContext = await _contextManager.GetContext(charId, token);
 
@@ -28,8 +24,9 @@ public class CommandFactory
         {
             return readListCommand;
         }
-
-        if (CreateCommandWithContext(commandType, userContext, out BaseCommand commandWithoutContext))
+        
+        var commandType = commandName.ToCommandType();
+        if (CreateCommand(commandType, userContext, out BaseCommand commandWithoutContext))
         {
             return commandWithoutContext;
         }
@@ -37,11 +34,12 @@ public class CommandFactory
         return CreateNotFoundCommand();
     }
 
-    private bool CreateCommandWithoutContext(CommandType? enumCommand, out BaseCommand command)
+    private bool CreateCommand(CommandType? enumCommand, UserContext? context, out BaseCommand command)
     {
         var commandType = enumCommand switch
         {
             CommandType.GetDescription => typeof(DescriptionCommand),
+            CommandType.Start => typeof(StartCommand),
             _ => null
         };
 
@@ -51,25 +49,7 @@ public class CommandFactory
             return false;
         }
 
-        command = GetCommand(commandType);
-        return true;
-    }
-
-    private bool CreateCommandWithContext(CommandType? enumCommand, UserContext? context, out BaseCommand command)
-    {
-        var commandType = enumCommand switch
-        {
-            CommandType.GetDescription => typeof(DescriptionCommand),
-            _ => null
-        };
-
-        if (commandType is null)
-        {
-            command = default!;
-            return false;
-        }
-
-        BaseCommandWithContext commandWithContext = GetCommand(commandType) as BaseCommandWithContext ?? throw new InvalidCastException();
+        BaseCommand commandWithContext = GetCommand(commandType);
         commandWithContext.SetContext(context);
         command = commandWithContext;
         return true;

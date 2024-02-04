@@ -15,5 +15,7 @@ public enum CommandType
     [Description("Скопируй ссылку")]
     CopyLink,
     [Description("/description")]
-    GetDescription
+    GetDescription,
+    [Description("/start")]
+    Start
 }

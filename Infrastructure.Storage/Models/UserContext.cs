@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace Infrastructure.Storage.Models;
+﻿namespace Infrastructure.Storage.Models;
 
 public class UserContext
 {

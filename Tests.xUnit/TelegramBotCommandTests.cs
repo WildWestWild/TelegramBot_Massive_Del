@@ -13,15 +13,22 @@ public class TelegramBotCommandTests
         _commandFactory = commandFactory;
     }
     
-    [Theory]
-    [InlineData("/description")]
-    public async Task ProcessCommandTest(string messageText)
+    
+    public async Task<BaseCommand> ProcessCommandTest(string messageText, long charId)
     {
-        var command = await _commandFactory.CreateCommand(messageText, default, _cts.Token);
+        var command = await _commandFactory.CreateCommand(messageText, charId, _cts.Token);
         await command.Process(default, _cts.Token);
-        if (command is BaseCommandWithContext commandWithContext)
-        {
-            commandWithContext.OnAfterCommandEvent();
-        }
+        command.OnAfterCommandEvent();
+
+        return command;
+    }
+
+    [Theory]
+    [InlineData("/description", default, "Я - бот, который поможет хранить и редактировать упорядоченные списки")]
+    [InlineData("/start", default, "Давайте начнём!")]
+    public async Task AllCommandWithoutContextTest(string messageText, long charId, string expectedMessageText)
+    {
+        var command = await ProcessCommandTest(messageText, charId);
+        Assert.Contains(expectedMessageText, command.Message);
     }
 }
