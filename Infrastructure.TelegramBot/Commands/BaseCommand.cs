@@ -8,10 +8,10 @@ public abstract class BaseCommand
 {
     private readonly ITelegramBotClient _botClient;
     protected UserContext? UserContext { get; private set; }
-    protected ReplyKeyboardMarkup KeyboardMarkup { get; set; }
+    protected ReplyKeyboardMarkup? KeyboardMarkup { get; set; }
     protected event Action? AfterCommandEvent;
     protected readonly ContextManager ContextManager;
-    public string Message { get; protected set; }
+    public string? Message { get; protected set; }
 
     public BaseCommand(ITelegramBotClient botClient, ContextManager contextManager)
     {
@@ -28,9 +28,9 @@ public abstract class BaseCommand
     {
         return _botClient.SendTextMessageAsync(
             chatId: chatId,
-            text: Message,
+            text: Message ?? throw new ArgumentNullException(nameof(Message)),
             cancellationToken: token,
-            replyMarkup: KeyboardMarkup);
+            replyMarkup: KeyboardMarkup ?? throw new ArgumentNullException(nameof(KeyboardMarkup)));
     }
     
     /// <summary>

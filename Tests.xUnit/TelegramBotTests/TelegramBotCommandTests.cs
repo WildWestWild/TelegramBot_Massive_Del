@@ -19,7 +19,6 @@ public class TelegramBotCommandTests
         await command.Process(chatId, _cts.Token);
         command.OnAfterCommandEvent();
         Assert.Contains(expectedMessageText, command.Message);
-        Console.WriteLine($"messageText = {commandText}, CharId={chatId}, ExpectedMessageText = {expectedMessageText}, ActualMessageText = {command.Message}");
     }
 
     [Theory]

@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Infrastructure.TelegramBot.Helpers;
+using Telegram.Bot;
 
 namespace Infrastructure.TelegramBot.Commands;
 
@@ -11,6 +12,8 @@ public class StartCommand: BaseCommand
     public override Task Process(long chatId, CancellationToken token)
     {
         Message = "Давайте начнём!";
+
+        KeyboardMarkup = KeyboardHelper.GetKeyboard();
         
         AddEventToRemoveContext(token);
         
