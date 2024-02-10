@@ -27,7 +27,9 @@ public class AddElementToListAction: BaseAction
             _db.UserListElements.Add(new UserListElement
             {
                 UserListInfoId = userListInfo.Id,
-                Number = command.Number,
+                Number = (ushort)(userListInfo.UserListElements.Count.Equals(0) 
+                    ? 1 
+                    : userListInfo.UserListElements.Count + 1),
                 Data = command.Data
             });
 
