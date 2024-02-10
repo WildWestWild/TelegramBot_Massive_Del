@@ -9,6 +9,8 @@ public class DescriptionCommand: BaseCommand
     {
     }
 
+    public override bool IsNeedSetEnterCommandText => false;
+
     public override Task Process(long chatId, CancellationToken token)
     {
         Message = "Приветствую! \"Массив дел\" на связи! \n \n " +

@@ -7,7 +7,9 @@ public class NotFoundCommand: BaseCommand
     public NotFoundCommand(ITelegramBotClient botClient, ContextManager contextManager) : base(botClient, contextManager)
     {
     }
-    
+
+    public override bool IsNeedSetEnterCommandText => false;
+
     public override Task Process(long chatId, CancellationToken token)
     {
         Message =

@@ -26,8 +26,8 @@ public class CommandFactory
         var commandType = commandName.ToCommandType() ?? GetCommandTypeByContext(userContext);
         if (CreateCommand(commandType, userContext, out BaseCommand command))
         {
-            if (userContext is not null && command is CreateListCommand addListCommand) 
-                addListCommand.SetListName(commandName);
+            if (command.IsNeedSetEnterCommandText) 
+                command.SetEnterCommandText(commandName);
             
             return command;
         }
@@ -42,6 +42,7 @@ public class CommandFactory
             CommandType.GetDescription => typeof(DescriptionCommand),
             CommandType.Start => typeof(StartCommand),
             CommandType.CreateNewList => typeof(CreateListCommand),
+            CommandType.AddElement => typeof(AddElementCommand),
             _ => null
         };
 

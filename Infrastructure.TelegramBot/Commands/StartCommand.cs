@@ -9,6 +9,8 @@ public class StartCommand: BaseCommand
     {
     }
 
+    public override bool IsNeedSetEnterCommandText => false;
+
     public override Task Process(long chatId, CancellationToken token)
     {
         Message = "Давайте начнём!";

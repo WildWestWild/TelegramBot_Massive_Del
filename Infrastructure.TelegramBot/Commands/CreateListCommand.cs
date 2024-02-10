@@ -9,13 +9,14 @@ namespace Infrastructure.TelegramBot.Commands;
 public class CreateListCommand : BaseCommand
 {
     private readonly AddListAction _addListAction;
-    protected string? ListName { get; set; }
 
     public CreateListCommand(ITelegramBotClient botClient, ContextManager contextManager, AddListAction addListAction) :
         base(botClient, contextManager)
     {
         _addListAction = addListAction;
     }
+
+    public override bool IsNeedSetEnterCommandText => true;
 
     public override async Task Process(long chatId, CancellationToken token)
     {
@@ -33,7 +34,7 @@ public class CreateListCommand : BaseCommand
             return;
         }
 
-        var uniqueListName = CreateUniqueListName(ListName ?? throw new ArgumentNullException(nameof(ListName)));
+        var uniqueListName = CreateUniqueListName(EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText)));
         var addListCommand = new AddListCommand
         {
             ChatId = chatId,
@@ -52,7 +53,7 @@ public class CreateListCommand : BaseCommand
         }
         else
         {
-            Message = $"Ошибка! Список '{ListName}' не был добавлен. Возможно стоит попробовать ещё раз.";
+            Message = $"Ошибка! Список '{EnterCommandText}' не был добавлен. Возможно стоит попробовать ещё раз.";
             KeyboardMarkup = KeyboardHelper.GetKeyboard();
 
             AfterCommandEvent += async () => { await ContextManager.RemoveContext(UserContext, token); };
@@ -60,8 +61,6 @@ public class CreateListCommand : BaseCommand
 
         await base.Process(chatId, token);
     }
-
-    internal void SetListName(string message) => ListName = message;
 
     private string CreateUniqueListName(string userListName) => $"{userListName}-G-{Guid.NewGuid()}";
 }

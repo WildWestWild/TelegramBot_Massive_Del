@@ -11,7 +11,9 @@ public abstract class BaseCommand
     protected ReplyKeyboardMarkup? KeyboardMarkup { get; set; }
     protected event Action? AfterCommandEvent;
     protected readonly ContextManager ContextManager;
+    protected string? EnterCommandText { get; private set; }
     public string? Message { get; protected set; }
+    public abstract bool IsNeedSetEnterCommandText { get; }
 
     public BaseCommand(ITelegramBotClient botClient, ContextManager contextManager)
     {
@@ -38,6 +40,8 @@ public abstract class BaseCommand
     /// </summary>
     /// <param name="context"></param>
     internal void SetContext(UserContext? context) => UserContext = context;
+
+    internal void SetEnterCommandText(string enterCommandText) => EnterCommandText = enterCommandText;
 
     protected void AddEventToRemoveContext(CancellationToken token)
     {
