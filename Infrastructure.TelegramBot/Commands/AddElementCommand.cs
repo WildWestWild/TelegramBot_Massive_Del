@@ -54,10 +54,10 @@ public class AddElementCommand: BaseCommand
         }
         else
         {
-            Message = "Ошибка! Елемент не был добавлен.";
+            Message = "Ошибка! Элемент не был добавлен.";
             KeyboardMarkup = KeyboardHelper.GetKeyboard();
 
-            AfterCommandEvent += async () => { await ContextManager.RemoveContext(UserContext, token); };
+            AddEventToRemoveContext(token);
         }
         
         await base.Process(chatId, token);

@@ -14,5 +14,7 @@ public class TelegramBotDatasets
         yield return new object[] { new TelegramBotDatasets { MessageText = "Это первый элемент!", ChartId = 1, ExpectedMessageText = "Элемент добавлен!" } };
         yield return new object[] { new TelegramBotDatasets { MessageText = "Добавь элемент", ChartId = 1, ExpectedMessageText = "Введите элемент: " } };
         yield return new object[] { new TelegramBotDatasets { MessageText = "Это второй элемент!", ChartId = 1, ExpectedMessageText = "Элемент добавлен!" } };
+        yield return new object[] { new TelegramBotDatasets { MessageText = "Редактируй элемент", ChartId = 1, ExpectedMessageText = "Введите номер элемента и текст в формате - Номер элемента, пробел, текст. Например: (3 Привет,Мир!)" } };
+        yield return new object[] { new TelegramBotDatasets { MessageText = "1 Это первый элемент (изменено)!", ChartId = 1, ExpectedMessageText = "Элемент изменён!" } };
     }
 }

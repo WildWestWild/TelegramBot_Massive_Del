@@ -43,6 +43,7 @@ public class CommandFactory
             CommandType.Start => typeof(StartCommand),
             CommandType.CreateNewList => typeof(CreateListCommand),
             CommandType.AddElement => typeof(AddElementCommand),
+            CommandType.UpdateElement => typeof(UpdateElementCommand),
             _ => null
         };
 
@@ -76,6 +77,6 @@ public class CommandFactory
         if (context?.Command is null)
             return null;
 
-        return (CommandType)context.Command;
+        return (CommandType) context.Command;
     }
 }

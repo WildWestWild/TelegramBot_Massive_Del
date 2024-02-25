@@ -45,6 +45,12 @@ namespace Core.ListActions.Actions
             }
         }
 
+        public async Task<int> GetCountElements(ICommandIdentificator command, CancellationToken token)
+        {
+            var userInfo = await AddUserInfoWithElementsInContext(command, token);
+            return userInfo.UserListElements.Count;
+        }
+
         internal Task<UserListInfo> AddUserInfoWithElementsInContext(ICommandIdentificator identificator, CancellationToken token) =>
             _db.UserListInfos
                 .Include(
