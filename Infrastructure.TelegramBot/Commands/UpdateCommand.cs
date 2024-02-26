@@ -3,21 +3,27 @@ using Core.ListActions.ActionCommands;
 using Core.ListActions.Actions;
 using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Helpers;
+using Infrastructure.TelegramBot.Validators;
 using Telegram.Bot;
 
 namespace Infrastructure.TelegramBot.Commands;
 
-public class UpdateElementCommand: BaseCommand
+public class UpdateCommand: BaseCommand
 {
-    private readonly ReadListAction _readListAction;
     private readonly UpdateElementFromListAction _updateElementFromListAction;
+    private readonly CommandValidator _commandValidator;
 
     private readonly Regex _parseUpdateRegex = new("(\\d+)\\s(.*)", RegexOptions.Compiled);
 
-    public UpdateElementCommand(ITelegramBotClient botClient, ContextManager contextManager, ReadListAction readListAction, UpdateElementFromListAction updateElementFromListAction) : base(botClient, contextManager)
+    public UpdateCommand(
+        ITelegramBotClient botClient, 
+        ContextManager contextManager,
+        UpdateElementFromListAction updateElementFromListAction,
+        CommandValidator commandValidator
+        ) : base(botClient, contextManager)
     {
-        _readListAction = readListAction;
         _updateElementFromListAction = updateElementFromListAction;
+        _commandValidator = commandValidator;
     }
 
     public override bool IsNeedSetEnterCommandText => true;
@@ -29,7 +35,7 @@ public class UpdateElementCommand: BaseCommand
         if (UserContext.Command is null)
         {
             Message = "Введите номер элемента и текст в формате - Номер элемента, пробел, текст. Например: (3 Привет,Мир!)";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard();
+            KeyboardMarkup = KeyboardHelper.GetKeyboard(UserContext.ListName);
 
             AfterCommandEvent += async () =>
             {
@@ -51,7 +57,7 @@ public class UpdateElementCommand: BaseCommand
         if (!match.Success || await CheckValidNumber(match, command, token))
         {
             Message = "Некорректный номер элемента! ";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard();
+            KeyboardMarkup = KeyboardHelper.GetKeyboard(UserContext.ListName);
 
             AddEventToRemoveContext(token);
 
@@ -75,7 +81,7 @@ public class UpdateElementCommand: BaseCommand
         else
         {
             Message = "Ошибка! Элемент не был изменён.";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard();
+            KeyboardMarkup = KeyboardHelper.GetKeyboard(UserContext.ListName);
 
             AddEventToRemoveContext(token);
         }
@@ -83,16 +89,6 @@ public class UpdateElementCommand: BaseCommand
         await base.Process(chatId, token);
     }
 
-    private async Task<bool> CheckValidNumber(Match match, ICommandIdentificator commandIdentificator, CancellationToken token)
-    {
-        try
-        {
-            var numberOfElement = Convert.ToUInt16(match.Groups[1].Value);
-            return numberOfElement < 1 && numberOfElement > await _readListAction.GetCountElements(commandIdentificator, token);
-        }
-        catch
-        {
-            return true;
-        }
-    }
+    private Task<bool> CheckValidNumber(Match match, ICommandIdentificator commandIdentificator, CancellationToken token)
+        => _commandValidator.CheckValidNumber(match.Groups[1].Value, commandIdentificator, token);
 }

@@ -42,8 +42,9 @@ public class CommandFactory
             CommandType.GetDescription => typeof(DescriptionCommand),
             CommandType.Start => typeof(StartCommand),
             CommandType.CreateNewList => typeof(CreateListCommand),
-            CommandType.AddElement => typeof(AddElementCommand),
-            CommandType.UpdateElement => typeof(UpdateElementCommand),
+            CommandType.AddElement => typeof(AddCommand),
+            CommandType.UpdateElement => typeof(UpdateCommand),
+            CommandType.DeleteElement => typeof(DeleteCommand),
             _ => null
         };
 

@@ -1,5 +1,6 @@
 ﻿using Infrastructure.TelegramBot.Commands;
 using Infrastructure.TelegramBot.Options;
+using Infrastructure.TelegramBot.Validators;
 using Infrastructure.TelegramBot.WorkerServices;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
@@ -51,13 +52,15 @@ namespace Infrastructure.TelegramBot
         {
             services.AddTransient<CommandFactory>();
             services.AddTransient<ContextManager>();
+            services.AddTransient<CommandValidator>();
             
             services.AddTransient<NotFoundCommand>();
             services.AddTransient<StartCommand>();
             services.AddTransient<DescriptionCommand>();
             services.AddTransient<CreateListCommand>();
-            services.AddTransient<AddElementCommand>();
-            services.AddTransient<UpdateElementCommand>();
+            services.AddTransient<AddCommand>();
+            services.AddTransient<UpdateCommand>();
+            services.AddTransient<DeleteCommand>();
         }
     }
 }

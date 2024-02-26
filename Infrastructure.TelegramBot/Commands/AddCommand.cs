@@ -6,11 +6,11 @@ using Telegram.Bot;
 
 namespace Infrastructure.TelegramBot.Commands;
 
-public class AddElementCommand: BaseCommand
+public class AddCommand: BaseCommand
 {
     private readonly AddElementToListAction _addElementToListAction;
 
-    public AddElementCommand(ITelegramBotClient botClient, ContextManager contextManager, AddElementToListAction addElementToListAction) : base(botClient, contextManager)
+    public AddCommand(ITelegramBotClient botClient, ContextManager contextManager, AddElementToListAction addElementToListAction) : base(botClient, contextManager)
     {
         _addElementToListAction = addElementToListAction;
     }
@@ -21,10 +21,11 @@ public class AddElementCommand: BaseCommand
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
         
+        KeyboardMarkup = KeyboardHelper.GetKeyboard(UserContext.ListName);
+        
         if (UserContext.Command is null)
         {
             Message = "Введите элемент: ";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard();
 
             AfterCommandEvent += async () =>
             {
@@ -45,7 +46,6 @@ public class AddElementCommand: BaseCommand
         if (await _addElementToListAction.AddElement(command, token))
         {
             Message = "Элемент добавлен!";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard(UserContext.ListName);
 
             AfterCommandEvent += async () =>
             {
@@ -55,7 +55,6 @@ public class AddElementCommand: BaseCommand
         else
         {
             Message = "Ошибка! Элемент не был добавлен.";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard();
 
             AddEventToRemoveContext(token);
         }

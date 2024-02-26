@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Infrastructure.TelegramBot.Helpers;
+using Telegram.Bot;
 
 namespace Infrastructure.TelegramBot.Commands;
 
@@ -14,6 +15,8 @@ public class NotFoundCommand: BaseCommand
     {
         Message =
             "Извините, но это неизвестная для меня команда, пожалуйста, введите команду из меню, либо с виртуальной клавиатуры.";
+
+        KeyboardMarkup = KeyboardHelper.GetKeyboard();
         
         return base.Process(chatId, token);
     }

@@ -28,9 +28,9 @@ public class TelegramBotCommandTests
         _commandFactory = commandFactory;
         _logger = logger;
         _context = context;
-    }  
-    
-    public async Task ProcessCommandTest(string commandText, long chatId, string expectedMessageText)
+    }
+
+    private async Task ProcessCommandTest(string commandText, long chatId, string expectedMessageText)
     {
         var command = await _commandFactory.CreateCommand(commandText, chatId, _cts.Token);
         await command.Process(chatId, _cts.Token);
@@ -40,7 +40,7 @@ public class TelegramBotCommandTests
         _logger.LogInformation($"UserContext = {JsonSerializer.Serialize(_context.UserContexts.FirstOrDefault(r=>r.ChatId.Equals(chatId)) ?? default, _serializerOptions)}");
         _logger.LogInformation($"UserInfo = {JsonSerializer.Serialize(_context.UserListInfos.FirstOrDefault(r=>r.ChatId.Equals(chatId)) ?? default, _serializerOptions)}");
     }
-
+  
     [Theory]
     [InlineData("/description", default, "Я - бот, который поможет хранить и редактировать упорядоченные списки")]
     [InlineData("/start", default, "Давайте начнём!")]
