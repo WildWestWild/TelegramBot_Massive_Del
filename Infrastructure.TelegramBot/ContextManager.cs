@@ -14,7 +14,11 @@ public class ContextManager
         _db = db;
     }
 
-    public Task<UserContext?> GetContext(long chatId, CancellationToken token) => _db.UserContexts.SingleOrDefaultAsync(r => r.ChatId.Equals(chatId), cancellationToken: token);
+    public Task<UserContext?> GetContext(long chatId, CancellationToken token)
+    {
+        _db.Database.EnsureCreated();
+        return _db.UserContexts.SingleOrDefaultAsync(r => r.ChatId.Equals(chatId), cancellationToken: token);
+    }
     
     public UserContext GetContextByCache(long chatId) => _db.UserContexts.Local.Single(r => r.ChatId.Equals(chatId));
 
