@@ -6,7 +6,7 @@ public class TelegramBotDatasets
     internal long ChartId { get; private init; }
     internal string ExpectedMessageText { get; private init; }
     
-    public static IEnumerable<object[]> GetOperationsWitList()
+    public static IEnumerable<object[]> GetOperationsWithRandomList()
     {
         yield return new object[] { new TelegramBotDatasets { MessageText = "Создай новый список", ChartId = 1, ExpectedMessageText = "Введите название списка: " } };
         yield return new object[] { new TelegramBotDatasets { MessageText = "Мой тестовый список", ChartId = 1, ExpectedMessageText = "Мой тестовый список" } };
@@ -18,5 +18,13 @@ public class TelegramBotDatasets
         yield return new object[] { new TelegramBotDatasets { MessageText = "1 Это первый элемент (изменено)!", ChartId = 1, ExpectedMessageText = "Элемент изменён!" } };
         yield return new object[] { new TelegramBotDatasets { MessageText = "Удали элемент", ChartId = 1, ExpectedMessageText = "Введите номер элемента:" } };
         yield return new object[] { new TelegramBotDatasets { MessageText = "2", ChartId = 1, ExpectedMessageText = "Элемент удалён!" } };
+    }
+    
+    public static IEnumerable<object[]> GetOperationsWithPreparedList()
+    {
+        yield return new object[] { new TelegramBotDatasets { MessageText = $"Покажи список \n ({TelegramBotCommandTests.PreparedUniqueListName})", ChartId = 2, ExpectedMessageText = $"Данный список не может быть отображен" } };
+        yield return new object[] { new TelegramBotDatasets { MessageText = "Добавь элемент", ChartId = 2, ExpectedMessageText = "Введите элемент: " } };
+        yield return new object[] { new TelegramBotDatasets { MessageText = $"Это первый элемент в списке - '{TelegramBotCommandTests.PreparedListName}'!", ChartId = 2, ExpectedMessageText = "Элемент добавлен!" } };
+        yield return new object[] { new TelegramBotDatasets { MessageText = $"Покажи список \n ({TelegramBotCommandTests.PreparedUniqueListName})", ChartId = 2, ExpectedMessageText = $"__{TelegramBotCommandTests.PreparedListName}__" } };
     }
 }

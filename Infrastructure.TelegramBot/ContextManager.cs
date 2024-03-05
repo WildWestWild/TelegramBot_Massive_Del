@@ -22,17 +22,19 @@ public class ContextManager
     
     public UserContext GetContextByCache(long chatId) => _db.UserContexts.Local.Single(r => r.ChatId.Equals(chatId));
 
-    public async Task CreateContext(long chatId, CommandType? commandType, CancellationToken token)
+    public async Task CreateContext(long chatId, CommandType? commandType, string? listName, CancellationToken token)
     {
         UserContext context = new UserContext
         {
             ChatId = chatId,
-            Command = ConvertCommandType(commandType)
+            Command = ConvertCommandType(commandType),
+            ListName = listName
         };
 
-        if (await _db.UserContexts.AnyAsync(userContext => userContext.ChatId.Equals(chatId),cancellationToken: token))
+        var oldContext = await _db.UserContexts.FirstOrDefaultAsync(userContext => userContext.ChatId.Equals(chatId), cancellationToken: token);
+        if (oldContext is not null)
         {
-            await RemoveContext(context, token);
+            await RemoveContext(oldContext, token);
         }
 
         _db.UserContexts.Add(context);

@@ -15,7 +15,7 @@ public class StartCommand: BaseCommand
     {
         Message = "Давайте начнём!";
 
-        KeyboardMarkup = KeyboardHelper.GetKeyboard();
+        KeyboardMarkup = KeyboardHelper.GetStartKeyboard();
         
         AddEventToRemoveContext(token);
         

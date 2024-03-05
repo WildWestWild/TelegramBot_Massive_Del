@@ -35,7 +35,7 @@ public class UpdateCommand: BaseCommand
         if (UserContext.Command is null)
         {
             Message = "Введите номер элемента и текст в формате - Номер элемента, пробел, текст. Например: (3 Привет,Мир!)";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard(UserContext.ListName);
+            KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
             AfterCommandEvent += async () =>
             {
@@ -57,7 +57,7 @@ public class UpdateCommand: BaseCommand
         if (!match.Success || await CheckValidNumber(match, command, token))
         {
             Message = "Некорректный номер элемента! ";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard(UserContext.ListName);
+            KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
             AddEventToRemoveContext(token);
 
@@ -71,7 +71,7 @@ public class UpdateCommand: BaseCommand
         if (await _updateElementFromListAction.UpdateFromList(command, token))
         {
             Message = "Элемент изменён!";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard(UserContext.ListName);
+            KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
             AfterCommandEvent += async () =>
             {
@@ -81,12 +81,14 @@ public class UpdateCommand: BaseCommand
         else
         {
             Message = "Ошибка! Элемент не был изменён.";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard(UserContext.ListName);
+            KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
             AddEventToRemoveContext(token);
         }
 
         await base.Process(chatId, token);
+        
+        _updateElementFromListAction.OnAfterActionEvent(command);
     }
 
     private Task<bool> CheckValidNumber(Match match, ICommandIdentificator commandIdentificator, CancellationToken token)

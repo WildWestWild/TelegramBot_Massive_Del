@@ -10,14 +10,14 @@ public static class KeyboardHelper
     public static readonly string UpdateElementText = "Редактируй элемент";
     public static readonly string CopyLinkText = "Скопируй ссылку на список";
 
-    public static ReplyKeyboardMarkup GetKeyboard(string listName)
+    public static ReplyKeyboardMarkup GetKeyboardForConcreteList(string uniqueListName)
     {
         return new ReplyKeyboardMarkup(
                 new List<KeyboardButton[]>()
                 {
                     new KeyboardButton[]
                     {
-                        new($"Покажи список \n ({listName})"),
+                        new($"Покажи список:\n ({uniqueListName})"),
                         new(NewListText)
                     },
                     new KeyboardButton[]
@@ -38,7 +38,7 @@ public static class KeyboardHelper
             { ResizeKeyboard = true };
     }
 
-    public static ReplyKeyboardMarkup GetKeyboard()
+    public static ReplyKeyboardMarkup GetStartKeyboard()
     {
         return new ReplyKeyboardMarkup(
                 new List<KeyboardButton[]>()

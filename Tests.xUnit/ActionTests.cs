@@ -63,7 +63,7 @@ namespace Tests.xUnit
                     Data = "1"
                 }, _cancellationTokenSource.Token);
             }
-            _addElementToListAction.OnAfterCommandAction(Command);
+            _addElementToListAction.OnAfterActionEvent(Command);
 
             var addElementResult = await _readListAction.GetList(Command, _cancellationTokenSource.Token);
             _logger.LogInformation("Create start");
@@ -85,7 +85,7 @@ namespace Tests.xUnit
                     Data = "2"
                 }, _cancellationTokenSource.Token);
             }
-            _updateElementFromListAction.OnAfterCommandAction(Command);
+            _updateElementFromListAction.OnAfterActionEvent(Command);
             
             var updateElementResult = await _readListAction.GetList(Command, _cancellationTokenSource.Token);
             _logger.LogInformation("Update start");
@@ -106,7 +106,7 @@ namespace Tests.xUnit
                     Number = number
                 }, _cancellationTokenSource.Token);
             }
-            _deleteElementFromListAction.OnAfterCommandAction(Command);
+            _deleteElementFromListAction.OnAfterActionEvent(Command);
             
             var deleteActionResult = await _readListAction.GetList(Command, _cancellationTokenSource.Token);
             _logger.LogInformation("Delete start");

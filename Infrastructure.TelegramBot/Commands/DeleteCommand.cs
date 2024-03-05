@@ -27,7 +27,7 @@ public class DeleteCommand: BaseCommand
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
         
-        KeyboardMarkup = KeyboardHelper.GetKeyboard(UserContext.ListName);
+        KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
         
         if (UserContext.Command is null)
         {
@@ -76,5 +76,7 @@ public class DeleteCommand: BaseCommand
         }
         
         await base.Process(chatId, token);
+        
+        _deleteElementFromListAction.OnAfterActionEvent(command);
     }
 }

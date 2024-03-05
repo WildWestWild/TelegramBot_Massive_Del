@@ -6,5 +6,5 @@ public abstract class BaseAction
 {
     protected event Action<ICommandIdentificator>? AfterCommandAction;
 
-    public void OnAfterCommandAction(ICommandIdentificator obj) =>  AfterCommandAction?.Invoke(obj);
+    public void OnAfterActionEvent(ICommandIdentificator obj) =>  AfterCommandAction?.Invoke(obj);
 }

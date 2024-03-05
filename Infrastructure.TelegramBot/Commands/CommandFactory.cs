@@ -7,6 +7,7 @@ public class CommandFactory
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ContextManager _contextManager;
+    private const ushort MIN_SYMBOLS_FOR_UNIQUE_LIST = 40;
 
     public CommandFactory(IServiceProvider serviceProvider, ContextManager contextManager)
     {
@@ -16,12 +17,13 @@ public class CommandFactory
     
     public async ValueTask<BaseCommand> CreateCommand(string commandName, long charId, CancellationToken token)
     {
-        var userContext = await _contextManager.GetContext(charId, token);
-
-        if (userContext is not null && CreateReadListCommand(commandName, userContext, out var readListCommand))
+        if (CreateReadListCommand(commandName, out var readListCommand))
         {
+            readListCommand.SetEnterCommandText(commandName);
             return readListCommand;
         }
+        
+        var userContext = await _contextManager.GetContext(charId, token);
         
         var commandType = commandName.ToCommandType() ?? GetCommandTypeByContext(userContext);
         if (CreateCommand(commandType, userContext, out BaseCommand command))
@@ -65,9 +67,15 @@ public class CommandFactory
                ?? throw new NullReferenceException(nameof(commandType));
     }
 
-    private bool CreateReadListCommand(string commandName, UserContext context, out BaseCommand command)
+    private bool CreateReadListCommand(string commandName, out BaseCommand command)
     {
-        command = default;
+        if (commandName.Length >= MIN_SYMBOLS_FOR_UNIQUE_LIST && ReadCommand.FindListInCommandText.IsMatch(commandName))
+        {
+            command = GetCommand(typeof(ReadCommand));
+            return true;
+        }
+        
+        command = default!;
         return false;
     }
 

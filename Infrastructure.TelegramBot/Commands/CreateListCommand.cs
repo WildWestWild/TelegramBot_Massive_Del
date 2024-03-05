@@ -1,6 +1,7 @@
 ﻿using Core.ListActions.ActionCommands;
 using Core.ListActions.Actions;
 using Infrastructure.TelegramBot.Enums;
+using Infrastructure.TelegramBot.Extensions;
 using Infrastructure.TelegramBot.Helpers;
 using Telegram.Bot;
 
@@ -20,14 +21,14 @@ public class CreateListCommand : BaseCommand
 
     public override async Task Process(long chatId, CancellationToken token)
     {
-        if (UserContext is null)
+        if (UserContext is null || UserContext.ListName is not null)
         {
             Message = "Введите название списка: ";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard();
+            KeyboardMarkup = KeyboardHelper.GetStartKeyboard();
 
             AfterCommandEvent += async () =>
             {
-                await ContextManager.CreateContext(chatId, CommandType.CreateNewList, token);
+                await ContextManager.CreateContext(chatId, CommandType.CreateNewList, null, token);
             };
 
             await base.Process(chatId, token);
@@ -43,8 +44,8 @@ public class CreateListCommand : BaseCommand
 
         if (await _addListAction.AddList(addListCommand, token))
         {
-            Message = $"Список с уникальным названием '{uniqueListName}' успешно создан!";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard(uniqueListName);
+            Message = $"Список с названием '{uniqueListName.GetOnlyListName()}' успешно создан!";
+            KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(uniqueListName);
 
             AfterCommandEvent += async () =>
             {
@@ -54,12 +55,14 @@ public class CreateListCommand : BaseCommand
         else
         {
             Message = $"Ошибка! Список '{EnterCommandText}' не был добавлен. Возможно стоит попробовать ещё раз.";
-            KeyboardMarkup = KeyboardHelper.GetKeyboard();
+            KeyboardMarkup = KeyboardHelper.GetStartKeyboard();
 
             AfterCommandEvent += async () => { await ContextManager.RemoveContext(UserContext, token); };
         }
 
         await base.Process(chatId, token);
+        
+        _addListAction.OnAfterActionEvent(addListCommand);
     }
 
     private string CreateUniqueListName(string userListName) => $"{userListName}-G-{Guid.NewGuid()}";

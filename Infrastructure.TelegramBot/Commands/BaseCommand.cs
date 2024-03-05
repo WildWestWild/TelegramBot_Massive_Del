@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Storage.Models;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Infrastructure.TelegramBot.Commands;
@@ -13,6 +14,7 @@ public abstract class BaseCommand
     protected readonly ContextManager ContextManager;
     protected string? EnterCommandText { get; private set; }
     public string? Message { get; protected set; }
+    public ParseMode ParseMode { get; protected set; } = ParseMode.Markdown;
     public abstract bool IsNeedSetEnterCommandText { get; }
 
     public BaseCommand(ITelegramBotClient botClient, ContextManager contextManager)
@@ -32,6 +34,7 @@ public abstract class BaseCommand
             chatId: chatId,
             text: Message ?? throw new ArgumentNullException(nameof(Message)),
             cancellationToken: token,
+            parseMode: ParseMode,
             replyMarkup: KeyboardMarkup ?? throw new ArgumentNullException(nameof(KeyboardMarkup)));
     }
     
