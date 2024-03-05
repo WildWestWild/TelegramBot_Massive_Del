@@ -5,7 +5,6 @@ using Core.ListActions.Actions;
 using Core.ListActions.DTO;
 using Infrastructure.TelegramBot.Extensions;
 using Infrastructure.TelegramBot.Helpers;
-using Microsoft.Extensions.Primitives;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
@@ -77,7 +76,25 @@ public class ReadCommand: BaseCommand
         foreach (var dto in list)
         {
             htmlMessage.Append("\n \n");
-            htmlMessage.Append($@" {dto.Number}\. {dto.Data} ");
+            htmlMessage.Append($@" {dto.Number}. {dto.Data} "
+                .Replace("_", "\\_")
+                .Replace("*", "\\*")
+                .Replace("[", "\\[")
+                .Replace("]", "\\]")
+                .Replace("(", "\\(")
+                .Replace(")", "\\)")
+                .Replace("~", "\\~")
+                .Replace("`", "\\`")
+                .Replace(">", "\\>")
+                .Replace("#", "\\#")
+                .Replace("+", "\\+")
+                .Replace("-", "\\-")
+                .Replace("=", "\\=")
+                .Replace("|", "\\|")
+                .Replace("{", "\\{")
+                .Replace("}", "\\}")
+                .Replace(".", "\\.")
+                .Replace("!", "\\!"));
         }
         
         return htmlMessage.ToString();
