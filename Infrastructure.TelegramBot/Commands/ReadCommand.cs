@@ -76,27 +76,19 @@ public class ReadCommand: BaseCommand
         foreach (var dto in list)
         {
             htmlMessage.Append("\n \n");
-            htmlMessage.Append($@" {dto.Number}. {dto.Data} "
-                .Replace("_", "\\_")
-                .Replace("*", "\\*")
-                .Replace("[", "\\[")
-                .Replace("]", "\\]")
-                .Replace("(", "\\(")
-                .Replace(")", "\\)")
-                .Replace("~", "\\~")
-                .Replace("`", "\\`")
-                .Replace(">", "\\>")
-                .Replace("#", "\\#")
-                .Replace("+", "\\+")
-                .Replace("-", "\\-")
-                .Replace("=", "\\=")
-                .Replace("|", "\\|")
-                .Replace("{", "\\{")
-                .Replace("}", "\\}")
-                .Replace(".", "\\.")
-                .Replace("!", "\\!"));
+            htmlMessage.Append($@" {dto.Number}\. {GetProcessingData(dto)} ");
         }
         
         return htmlMessage.ToString();
+    }
+
+    private string GetProcessingData(UserListElementDTO dto)
+    {
+        if (dto.IsStrikingOut)
+        {
+            return "~" + dto.Data + "~";
+        }
+
+        return dto.Data;
     }
 }

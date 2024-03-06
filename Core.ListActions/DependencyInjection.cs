@@ -16,5 +16,6 @@ public static class DependencyInjection
         serviceCollection.AddTransient<AddElementToListAction>();
         serviceCollection.AddTransient<DeleteElementFromListAction>();
         serviceCollection.AddTransient<UpdateElementFromListAction>();
+        serviceCollection.AddTransient<StrikingOutElementAction>();
     }
 }

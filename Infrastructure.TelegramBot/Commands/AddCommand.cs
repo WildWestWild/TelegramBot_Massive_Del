@@ -6,11 +6,12 @@ using Telegram.Bot;
 
 namespace Infrastructure.TelegramBot.Commands;
 
-public class AddCommand: BaseCommand
+public class AddCommand : BaseCommand
 {
     private readonly AddElementToListAction _addElementToListAction;
 
-    public AddCommand(ITelegramBotClient botClient, ContextManager contextManager, AddElementToListAction addElementToListAction) : base(botClient, contextManager)
+    public AddCommand(ITelegramBotClient botClient, ContextManager contextManager,
+        AddElementToListAction addElementToListAction) : base(botClient, contextManager)
     {
         _addElementToListAction = addElementToListAction;
     }
@@ -20,9 +21,9 @@ public class AddCommand: BaseCommand
     public override async Task Process(long chatId, CancellationToken token)
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
-        
+
         KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
-        
+
         if (UserContext.Command is null)
         {
             Message = "Введите элемент: ";
@@ -36,11 +37,31 @@ public class AddCommand: BaseCommand
             return;
         }
 
+        if (EnterCommandText is null) throw new ArgumentNullException(nameof(EnterCommandText));
+
         var command = new AddOrUpdateElementCommand
         {
             ChatId = chatId,
             Name = UserContext.ListName ?? throw new ArgumentNullException(nameof(UserContext.ListName)),
-            Data = EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText))
+            Data = EnterCommandText
+                .Replace("_", "\\_")
+                .Replace("*", "\\*")
+                .Replace("[", "\\[")
+                .Replace("]", "\\]")
+                .Replace("(", "\\(")
+                .Replace(")", "\\)")
+                .Replace("~", "\\~")
+                .Replace("`", "\\`")
+                .Replace(">", "\\>")
+                .Replace("#", "\\#")
+                .Replace("+", "\\+")
+                .Replace("-", "\\-")
+                .Replace("=", "\\=")
+                .Replace("|", "\\|")
+                .Replace("{", "\\{")
+                .Replace("}", "\\}")
+                .Replace(".", "\\.")
+                .Replace("!", "\\!")
         };
 
         if (await _addElementToListAction.AddElement(command, token))
@@ -58,9 +79,9 @@ public class AddCommand: BaseCommand
 
             AddEventToRemoveContext(token);
         }
-        
+
         await base.Process(chatId, token);
-        
+
         _addElementToListAction.OnAfterActionEvent(command);
     }
 }

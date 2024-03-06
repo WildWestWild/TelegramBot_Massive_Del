@@ -28,7 +28,7 @@ public class DeleteElementFromListAction: BaseAction
                     r=>r.Number.Equals(command.Number))
             );
             
-            AfterCommandAction += (identificator) =>
+            AfterActionEvent += (identificator) =>
             {
                 _readListAction.ResetCache(identificator);
             };

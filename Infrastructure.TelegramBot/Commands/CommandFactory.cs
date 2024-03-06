@@ -47,6 +47,7 @@ public class CommandFactory
             CommandType.AddElement => typeof(AddCommand),
             CommandType.UpdateElement => typeof(UpdateCommand),
             CommandType.DeleteElement => typeof(DeleteCommand),
+            CommandType.StrikingOutElement => typeof(StrikingOutCommand),
             _ => null
         };
 

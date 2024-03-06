@@ -16,7 +16,6 @@ public class ContextManager
 
     public Task<UserContext?> GetContext(long chatId, CancellationToken token)
     {
-        _db.Database.EnsureCreated();
         return _db.UserContexts.SingleOrDefaultAsync(r => r.ChatId.Equals(chatId), cancellationToken: token);
     }
     

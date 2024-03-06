@@ -1,30 +1,31 @@
 ﻿using System.Text.Json;
 using Core.ListActions.ActionCommands;
 using Infrastructure.Storage;
+using Infrastructure.Storage.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Core.ListActions.Actions;
 
-public class UpdateElementFromListAction: BaseAction
+public class StrikingOutElementAction: BaseAction
 {
     private readonly IDbContext _db;
     private readonly ReadListAction _readListAction;
-    private readonly ILogger<UpdateElementFromListAction> _logger;
+    private readonly ILogger<StrikingOutElementAction> _logger;
 
-    public UpdateElementFromListAction(IDbContext db, ReadListAction readListAction, ILogger<UpdateElementFromListAction> logger)
+    public StrikingOutElementAction(IDbContext db, ReadListAction readListAction, ILogger<StrikingOutElementAction> logger)
     {
         _db = db;
         _readListAction = readListAction;
         _logger = logger;
     }
-
-    public async Task<bool> UpdateFromList(AddOrUpdateElementCommand command, CancellationToken token)
+    
+    public async Task<bool> StrikingOutElement(AddOrUpdateElementCommand command, CancellationToken token)
     {
         try
         {
             await _readListAction.AddUserInfoWithElementsInContext(command, token);
             var element = _db.UserListElements.First(r => r.Number.Equals(command.Number));
-            element.Data = command.Data;
+            element.IsStrikingOut = !element.IsStrikingOut;
             
             AfterActionEvent += (identificator) =>
             {
@@ -35,7 +36,7 @@ public class UpdateElementFromListAction: BaseAction
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"[{nameof(UpdateFromList)}] Fail to add update. Command = {JsonSerializer.Serialize(command)}");
+            _logger.LogError(e, $"[{nameof(StrikingOutElement)}] Fail to striking out. Command = {JsonSerializer.Serialize(command)}");
             return false;
         }
     }

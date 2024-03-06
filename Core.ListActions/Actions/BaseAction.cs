@@ -4,7 +4,7 @@ namespace Core.ListActions.Actions;
 
 public abstract class BaseAction
 {
-    protected event Action<ICommandIdentificator>? AfterCommandAction;
+    protected event Action<ICommandIdentificator>? AfterActionEvent;
 
-    public void OnAfterActionEvent(ICommandIdentificator obj) =>  AfterCommandAction?.Invoke(obj);
+    public void OnAfterActionEvent(ICommandIdentificator obj) =>  AfterActionEvent?.Invoke(obj);
 }

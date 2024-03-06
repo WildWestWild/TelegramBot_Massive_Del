@@ -12,7 +12,7 @@ namespace Infrastructure.Storage
             {
                 optionsBuilder
                     .UseLoggerFactory(LoggerFactory.Create(settings => settings.SetMinimumLevel(LogLevel.Information)))
-                    .UseSqlite(@"Data Source=massive_del.db");
+                    .UseSqlite(@"Data Source=../Infrastructure.Storage/massive_del.db");
             }
         }
         public DbSet<UserListInfo> UserListInfos { get; set; }

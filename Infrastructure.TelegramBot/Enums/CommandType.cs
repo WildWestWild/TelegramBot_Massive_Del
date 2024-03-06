@@ -12,6 +12,8 @@ public enum CommandType
     DeleteElement,
     [Description("Редактируй элемент")]
     UpdateElement,
+    [Description("Вычеркни элемент")]
+    StrikingOutElement,
     [Description("Скопируй ссылку")]
     CopyLink,
     [Description("/description")]

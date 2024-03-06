@@ -20,5 +20,10 @@
         /// Наполнение элемента
         /// </summary>
         public string Data { get; set; }
+        
+        /// <summary>
+        /// Вычеркнут ли элемент
+        /// </summary>
+        public bool IsStrikingOut { get; set; }
     }
 }

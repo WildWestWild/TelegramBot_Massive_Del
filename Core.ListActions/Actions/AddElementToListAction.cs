@@ -33,7 +33,7 @@ public class AddElementToListAction: BaseAction
                 Data = command.Data
             });
 
-            AfterCommandAction += (identificator) =>
+            AfterActionEvent += (identificator) =>
             {
                 _readListAction.ResetCache(identificator);
             };
