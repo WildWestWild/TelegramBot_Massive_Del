@@ -24,7 +24,7 @@ public class StrikingOutElementAction: BaseAction
         try
         {
             await _readListAction.AddUserInfoWithElementsInContext(command, token);
-            var element = _db.UserListElements.First(r => r.Number.Equals(command.Number));
+            var element = _db.UserListElements.Local.First(r => r.Number.Equals(command.Number));
             element.IsStrikingOut = !element.IsStrikingOut;
             
             AfterActionEvent += (identificator) =>

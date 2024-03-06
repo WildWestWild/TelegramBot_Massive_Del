@@ -23,7 +23,7 @@ public class UpdateElementFromListAction: BaseAction
         try
         {
             await _readListAction.AddUserInfoWithElementsInContext(command, token);
-            var element = _db.UserListElements.First(r => r.Number.Equals(command.Number));
+            var element = _db.UserListElements.Local.First(r => r.Number.Equals(command.Number));
             element.Data = command.Data;
             
             AfterActionEvent += (identificator) =>
