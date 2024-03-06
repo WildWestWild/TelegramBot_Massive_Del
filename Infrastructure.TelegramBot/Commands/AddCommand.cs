@@ -21,12 +21,12 @@ public class AddCommand : BaseCommand
     public override async Task Process(long chatId, CancellationToken token)
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
+        
+        KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
 
         if (UserContext.Command is null)
         {
-            Message = "Введите элемент: ";
-
-            KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
+            Message = "Введите элемент (чтобы выйти из режима записи в список, нажмите 'Отменить действие'):";
 
             AfterCommandEvent += async () =>
             {
@@ -36,8 +36,6 @@ public class AddCommand : BaseCommand
             await base.Process(chatId, token);
             return;
         }
-        
-        KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
         if (EnterCommandText is null) throw new ArgumentNullException(nameof(EnterCommandText));
 
@@ -69,11 +67,6 @@ public class AddCommand : BaseCommand
         if (await _addElementToListAction.AddElement(command, token))
         {
             Message = "Элемент добавлен!";
-
-            AfterCommandEvent += async () =>
-            {
-                await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
-            };
         }
         else
         {
