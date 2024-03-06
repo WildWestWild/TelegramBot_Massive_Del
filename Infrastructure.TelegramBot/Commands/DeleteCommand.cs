@@ -26,12 +26,11 @@ public class DeleteCommand: BaseCommand
     public override async Task Process(long chatId, CancellationToken token)
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
-        
-        KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
-        
+
         if (UserContext.Command is null)
         {
             Message = "Введите номер элемента: ";
+            KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
 
             AfterCommandEvent += async () =>
             {
@@ -41,6 +40,8 @@ public class DeleteCommand: BaseCommand
             await base.Process(chatId, token);
             return;
         }
+        
+        KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
         
         var command = new DeleteElementCommand
         {

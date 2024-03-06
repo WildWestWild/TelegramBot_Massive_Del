@@ -35,7 +35,7 @@ public class UpdateCommand: BaseCommand
         if (UserContext.Command is null)
         {
             Message = "Введите номер элемента и текст в формате - Номер элемента, пробел, текст. Например: (3 Привет,Мир!)";
-            KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
+            KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
 
             AfterCommandEvent += async () =>
             {
@@ -45,6 +45,8 @@ public class UpdateCommand: BaseCommand
             await base.Process(chatId, token);
             return;
         }
+        
+        KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
         
         var command = new AddOrUpdateElementCommand
         {
@@ -57,9 +59,11 @@ public class UpdateCommand: BaseCommand
         if (!match.Success || await CheckValidNumber(match, command, token))
         {
             Message = "Некорректный номер элемента! ";
-            KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
-            AddEventToRemoveContext(token);
+            AfterCommandEvent += async () =>
+            {
+                await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
+            };
 
             await base.Process(chatId, token);
             return;
@@ -71,7 +75,6 @@ public class UpdateCommand: BaseCommand
         if (await _updateElementFromListAction.UpdateFromList(command, token))
         {
             Message = "Элемент изменён!";
-            KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
             AfterCommandEvent += async () =>
             {
@@ -81,7 +84,6 @@ public class UpdateCommand: BaseCommand
         else
         {
             Message = "Ошибка! Элемент не был изменён.";
-            KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
             AddEventToRemoveContext(token);
         }

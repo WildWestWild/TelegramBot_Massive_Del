@@ -24,7 +24,7 @@ public class CreateListCommand : BaseCommand
         if (UserContext is null || UserContext.ListName is not null)
         {
             Message = "Введите название списка: ";
-            KeyboardMarkup = KeyboardHelper.GetStartKeyboard();
+            KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
 
             AfterCommandEvent += async () =>
             {

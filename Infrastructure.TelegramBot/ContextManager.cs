@@ -47,7 +47,7 @@ public class ContextManager
         return _db.SaveChangesAsync(token);
     }
     
-    public Task ChangeContext(long chatId, string listName, CommandType? commandType, CancellationToken token)
+    public Task ChangeContext(long chatId, string? listName, CommandType? commandType, CancellationToken token)
     {
         var userContext = GetContextByCache(chatId);
         userContext.Command = ConvertCommandType(commandType);

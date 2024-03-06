@@ -4,11 +4,12 @@ namespace Infrastructure.TelegramBot.Helpers;
 
 public static class KeyboardHelper
 {
-    public const string NewListText = "Создай новый список";
-    public static readonly string AddElementText = "Добавь элемент";
-    public static readonly string DeleteElementText = "Удали элемент";
-    public static readonly string UpdateElementText = "Редактируй элемент";
-    public static readonly string CopyLinkText = "Скопируй ссылку на список";
+    private const string NEW_LIST_TEXT = "Создай новый список";
+    private const string ADD_ELEMENT_TEXT = "Добавь элемент";
+    private const string DELETE_ELEMENT_TEXT = "Удали элемент";
+    private const string UPDATE_ELEMENT_TEXT = "Редактируй элемент";
+    private const string COPY_LINK_TEXT = "Скопируй ссылку на список";
+    private const string CANCEL_TEXT = "Отменить действие";
 
     public static ReplyKeyboardMarkup GetKeyboardForConcreteList(string uniqueListName)
     {
@@ -18,21 +19,21 @@ public static class KeyboardHelper
                     new KeyboardButton[]
                     {
                         new($"Покажи список:\n ({uniqueListName})"),
-                        new(NewListText)
+                        new(NEW_LIST_TEXT)
                     },
                     new KeyboardButton[]
                     {
-                        new(AddElementText),
+                        new(ADD_ELEMENT_TEXT),
                         new("Вычеркни элемент")
                     },
                     new KeyboardButton[]
                     {
-                        new(DeleteElementText),
-                        new(UpdateElementText)
+                        new(DELETE_ELEMENT_TEXT),
+                        new(UPDATE_ELEMENT_TEXT)
                     },
                     new KeyboardButton[]
                     {
-                        new(CopyLinkText)
+                        new(COPY_LINK_TEXT)
                     }
                 })
             { ResizeKeyboard = true };
@@ -45,7 +46,20 @@ public static class KeyboardHelper
                 {
                     new KeyboardButton[]
                     {
-                        new(NewListText)
+                        new(NEW_LIST_TEXT)
+                    }
+                })
+            { ResizeKeyboard = true };
+    }
+    
+    public static ReplyKeyboardMarkup GetCancelKeyboard()
+    {
+        return new ReplyKeyboardMarkup(
+                new List<KeyboardButton[]>()
+                {
+                    new KeyboardButton[]
+                    {
+                        new(CANCEL_TEXT)
                     }
                 })
             { ResizeKeyboard = true };

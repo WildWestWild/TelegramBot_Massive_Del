@@ -22,11 +22,11 @@ public class AddCommand : BaseCommand
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
 
-        KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
-
         if (UserContext.Command is null)
         {
             Message = "Введите элемент: ";
+
+            KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
 
             AfterCommandEvent += async () =>
             {
@@ -36,6 +36,8 @@ public class AddCommand : BaseCommand
             await base.Process(chatId, token);
             return;
         }
+        
+        KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
         if (EnterCommandText is null) throw new ArgumentNullException(nameof(EnterCommandText));
 

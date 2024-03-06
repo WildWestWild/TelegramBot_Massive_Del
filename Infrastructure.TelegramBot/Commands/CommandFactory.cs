@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Storage.Models;
 using Infrastructure.TelegramBot.Enums;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.TelegramBot.Commands;
 
@@ -15,27 +16,46 @@ public class CommandFactory
         _contextManager = contextManager;
     }
     
-    public async ValueTask<BaseCommand> CreateCommand(string commandName, long charId, CancellationToken token)
+    public async ValueTask<BaseCommand> CreateCommand(string message, long charId, CancellationToken token)
     {
-        if (CreateReadListCommand(commandName, out var readListCommand))
+        if (CreateReadListCommand(message, out var readListCommand))
         {
-            readListCommand.SetEnterCommandText(commandName);
+            readListCommand.SetEnterCommandText(message);
             return readListCommand;
         }
         
         var userContext = await _contextManager.GetContext(charId, token);
+
+        if (CancelCommand.IsNeedToUseCancelCommand(message))
+        {
+            return CreateCancelCommand(userContext: userContext);
+        }
         
-        var commandType = commandName.ToCommandType() ?? GetCommandTypeByContext(userContext);
+        var commandType = message.ToCommandType() ?? GetCommandTypeByContext(userContext);
         if (CreateCommand(commandType, userContext, out BaseCommand command))
         {
             if (command.IsNeedSetEnterCommandText) 
-                command.SetEnterCommandText(commandName);
+                command.SetEnterCommandText(message);
             
             return command;
         }
 
         return CreateNotFoundCommand();
     }
+
+    public BaseCommand CreateCancelCommand(string? message = null, UserContext? userContext = null)
+    {
+        var cancelCommand = _serviceProvider.GetRequiredService<CancelCommand>();
+        if (message is not null)
+            cancelCommand.SetEnterCommandText(message);
+        
+        if (userContext is not null)
+            cancelCommand.SetContext(userContext);
+        
+        return cancelCommand;
+    }
+    
+    
 
     private bool CreateCommand(CommandType? enumCommand, UserContext? context, out BaseCommand command)
     {
