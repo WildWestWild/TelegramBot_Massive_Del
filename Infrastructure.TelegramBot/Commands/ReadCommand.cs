@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Core.ListActions.ActionCommands;
 using Core.ListActions.Actions;
 using Core.ListActions.DTO;
-using Infrastructure.TelegramBot.CommandManagers;
+using Infrastructure.TelegramBot.BotManagers;
 using Infrastructure.TelegramBot.Extensions;
 using Infrastructure.TelegramBot.Helpers;
 using Telegram.Bot;
@@ -13,6 +13,7 @@ namespace Infrastructure.TelegramBot.Commands;
 
 public class ReadCommand: BaseCommand
 {
+    private readonly HistoryManager _historyManager;
     private readonly ReadListAction _readListAction;
 
     public static Regex FindLastUniqueListPart { get; } = new(
@@ -27,8 +28,9 @@ public class ReadCommand: BaseCommand
         @"[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}",
         RegexOptions.Compiled | RegexOptions.Singleline);
     
-    public ReadCommand(ITelegramBotClient botClient, ContextManager contextManager, ReadListAction readListAction) : base(botClient, contextManager)
+    public ReadCommand(ITelegramBotClient botClient, ContextManager contextManager, HistoryManager historyManager, ReadListAction readListAction) : base(botClient, contextManager)
     {
+        _historyManager = historyManager;
         _readListAction = readListAction;
     }
 
@@ -49,6 +51,7 @@ public class ReadCommand: BaseCommand
         AfterCommandEvent += async () =>
         {
             await ContextManager.CreateContext(chatId,null, uniqueListName, token);
+            await _historyManager.AddOrUpdateHistory(chatId, uniqueListName, token);
         };
 
         ReadListCommand command = new ReadListCommand
@@ -74,14 +77,14 @@ public class ReadCommand: BaseCommand
             return;
         }
 
-        Message = PrepareListInHtmlMessageFormat(list, uniqueListName.GetOnlyListName());
+        Message = PrepareListToMarkdownV2MessageFormat(list, uniqueListName.GetOnlyListName());
         KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(uniqueListName);
         ParseMode = ParseMode.MarkdownV2;
 
         await base.Process(chatId, token);
     }
 
-    private string PrepareListInHtmlMessageFormat(UserListElementDTO[] list, string listName)
+    private string PrepareListToMarkdownV2MessageFormat(UserListElementDTO[] list, string listName)
     {
         var htmlMessage = new StringBuilder($"__{listName}__");
         foreach (var dto in list)

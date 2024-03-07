@@ -1,5 +1,5 @@
 ﻿using Infrastructure.Storage.Models;
-using Infrastructure.TelegramBot.CommandManagers;
+using Infrastructure.TelegramBot.BotManagers;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;

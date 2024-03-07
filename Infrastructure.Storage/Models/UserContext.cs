@@ -11,12 +11,7 @@ public class UserContext
     /// Название списка для вывода меню
     /// </summary>
     public string? ListName { get; set; }
-    
-    /// <summary>
-    /// Является ли активным данный список?
-    /// </summary>
-    public bool IsActive { get; set; }
-    
+
     /// <summary>
     /// Последняя активная команда
     /// </summary>

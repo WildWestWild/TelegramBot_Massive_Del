@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using Infrastructure.Storage.Models;
-using Infrastructure.TelegramBot.CommandManagers;
+using Infrastructure.TelegramBot.BotManagers;
 using Microsoft.Extensions.Logging;
 using Xunit;
 

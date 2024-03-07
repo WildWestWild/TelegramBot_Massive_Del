@@ -4,7 +4,7 @@ using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Infrastructure.TelegramBot.CommandManagers;
+namespace Infrastructure.TelegramBot.BotManagers;
 
 public class CommandFactory
 {

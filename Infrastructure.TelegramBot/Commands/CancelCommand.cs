@@ -1,4 +1,5 @@
-﻿using Infrastructure.TelegramBot.CommandManagers;
+﻿using Infrastructure.TelegramBot.BotManagers;
+using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Helpers;
 using Telegram.Bot;
 
@@ -6,10 +7,12 @@ namespace Infrastructure.TelegramBot.Commands;
 
 public class CancelCommand: BaseCommand
 {
+    private readonly HistoryManager _historyManager;
     public static bool IsNeedToUseCancelCommand(string message) => message.Equals("Отменить действие");
     
-    public CancelCommand(ITelegramBotClient botClient, ContextManager contextManager) : base(botClient, contextManager)
+    public CancelCommand(ITelegramBotClient botClient, ContextManager contextManager, HistoryManager historyManager) : base(botClient, contextManager)
     {
+        _historyManager = historyManager;
     }
 
     public override bool IsNeedSetEnterCommandText => false;
@@ -31,10 +34,14 @@ public class CancelCommand: BaseCommand
         {
             AfterCommandEvent += async () =>
             {
+                if (UserContext.Command is not null && (CommandType) UserContext.Command == CommandType.GetHistory)
+                    await _historyManager.RemovePointer(chatId, token);
+                
                 if (UserContext.ListName is null)
                     await ContextManager.RemoveContext(UserContext, token);
                 else
                     await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
+                
             };
         }
         

@@ -1,4 +1,4 @@
-﻿using Infrastructure.TelegramBot.CommandManagers;
+﻿using Infrastructure.TelegramBot.BotManagers;
 using Infrastructure.TelegramBot.Helpers;
 using Telegram.Bot;
 

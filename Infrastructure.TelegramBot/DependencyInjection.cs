@@ -1,4 +1,4 @@
-﻿using Infrastructure.TelegramBot.CommandManagers;
+﻿using Infrastructure.TelegramBot.BotManagers;
 using Infrastructure.TelegramBot.Commands;
 using Infrastructure.TelegramBot.Options;
 using Infrastructure.TelegramBot.Validators;
@@ -54,6 +54,7 @@ public static class DependencyInjection
         services.AddTransient<CommandFactory>();
         services.AddTransient<ContextManager>();
         services.AddTransient<CommandValidator>();
+        services.AddTransient<HistoryManager>();
             
         services.AddTransient<NotFoundCommand>();
         services.AddTransient<StartCommand>();
@@ -66,5 +67,6 @@ public static class DependencyInjection
         services.AddTransient<StrikingOutCommand>();
         services.AddTransient<CancelCommand>();
         services.AddTransient<CopyLinkCommand>();
+        services.AddTransient<GetHistoryCommand>();
     }
 }

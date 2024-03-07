@@ -19,5 +19,7 @@ public enum CommandType
     [Description("/description")]
     GetDescription,
     [Description("/start")]
-    Start
+    Start,
+    [Description("/history")]
+    GetHistory
 }

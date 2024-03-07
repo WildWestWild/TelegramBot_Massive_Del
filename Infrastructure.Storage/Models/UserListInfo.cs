@@ -22,11 +22,6 @@
         public DateTime CreateDate { get; set; }
 
         /// <summary>
-        /// Активный контекст (на какой список сейчас смотрит пользователь)
-        /// </summary>
-        public bool IsActiveContext { get; set; }
-
-        /// <summary>
         /// Коллекция из элементов списка
         /// </summary>
         public ICollection<UserListElement> UserListElements { get; set; }

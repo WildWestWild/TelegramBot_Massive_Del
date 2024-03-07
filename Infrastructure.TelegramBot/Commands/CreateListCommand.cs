@@ -1,6 +1,6 @@
 ﻿using Core.ListActions.ActionCommands;
 using Core.ListActions.Actions;
-using Infrastructure.TelegramBot.CommandManagers;
+using Infrastructure.TelegramBot.BotManagers;
 using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Extensions;
 using Infrastructure.TelegramBot.Helpers;
@@ -10,11 +10,13 @@ namespace Infrastructure.TelegramBot.Commands;
 
 public class CreateListCommand : BaseCommand
 {
+    private readonly HistoryManager _historyManager;
     private readonly AddListAction _addListAction;
 
-    public CreateListCommand(ITelegramBotClient botClient, ContextManager contextManager, AddListAction addListAction) :
+    public CreateListCommand(ITelegramBotClient botClient, ContextManager contextManager, HistoryManager historyManager, AddListAction addListAction) :
         base(botClient, contextManager)
     {
+        _historyManager = historyManager;
         _addListAction = addListAction;
     }
 
@@ -51,6 +53,7 @@ public class CreateListCommand : BaseCommand
             AfterCommandEvent += async () =>
             {
                 await ContextManager.ChangeContext(chatId, uniqueListName, null, token);
+                await _historyManager.AddOrUpdateHistory(chatId, uniqueListName, token);
             };
         }
         else

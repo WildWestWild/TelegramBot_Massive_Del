@@ -1,5 +1,6 @@
 ﻿using Core.ListActions.ActionCommands;
 using Infrastructure.Storage;
+using Infrastructure.Storage.DbContext;
 using Infrastructure.Storage.Models;
 using Microsoft.Extensions.Logging;
 
@@ -24,8 +25,7 @@ public class AddListAction: BaseAction
             {
                 ChatId = command.ChatId,
                 Name = command.Name,
-                CreateDate = DateTime.Now,
-                IsActiveContext = true
+                CreateDate = DateTime.Now
             });
             
             return await _db.SaveChangesAsync(token) > 0;

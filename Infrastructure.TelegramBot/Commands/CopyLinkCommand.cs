@@ -1,11 +1,12 @@
-﻿using Infrastructure.TelegramBot.CommandManagers;
+﻿using Infrastructure.TelegramBot.BotManagers;
+using Infrastructure.TelegramBot.Extensions;
 using Infrastructure.TelegramBot.Helpers;
 using Telegram.Bot; 
 namespace Infrastructure.TelegramBot.Commands;
 
 public class CopyLinkCommand: BaseCommand
 {
-    private const string BOT_LINK = "*Ссылка на список:*\nhttps://t.me/Massive\\_Del\\_bot?start=";
+    public static string BotLink { get; } = "*Ссылка на список:*\nhttps://t.me/Massive\\_Del\\_bot?start=";
     
     public CopyLinkCommand(ITelegramBotClient botClient, ContextManager contextManager) : base(botClient, contextManager)
     {
@@ -17,7 +18,7 @@ public class CopyLinkCommand: BaseCommand
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
 
-        Message = BOT_LINK + ReadCommand.FindGuidLinkInText.Match(UserContext.ListName).Value;
+        Message = UserContext.ListName.GetLink();
         KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
         return base.Process(chatId, token);

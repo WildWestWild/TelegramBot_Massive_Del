@@ -1,9 +1,10 @@
 ﻿using Infrastructure.Storage;
+using Infrastructure.Storage.DbContext;
 using Infrastructure.Storage.Models;
 using Infrastructure.TelegramBot.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.TelegramBot.CommandManagers;
+namespace Infrastructure.TelegramBot.BotManagers;
 
 public class ContextManager
 {

@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Storage
+namespace Infrastructure.Storage.DbContext
 {
-    public class MassiveDelDbContext : DbContext, IDbContext
+    public class MassiveDelDbContext : Microsoft.EntityFrameworkCore.DbContext, IDbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -20,6 +20,10 @@ namespace Infrastructure.Storage
         public DbSet<UserListElement> UserListElements { get; set; }
         
         public DbSet<UserContext> UserContexts { get; set; }
+        
+        public DbSet<UserListHistory> UserListHistories { get; set; }
+        
+        public DbSet<UserListHistoryPointer> UserListHistoryPointers { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +47,16 @@ namespace Infrastructure.Storage
             modelBuilder.Entity<UserContext>(entity =>
             {
                 entity.HasKey(userContext => userContext.ChatId);
+            });
+
+            modelBuilder.Entity<UserListHistory>(entity =>
+            {
+                entity.HasKey(userListInfo => new { userListInfo.ChatId, userListInfo.ListName });
+            });
+            
+            modelBuilder.Entity<UserListHistoryPointer>(entity =>
+            {
+                entity.HasKey(userListInfo => new { userListInfo.ChatId });
             });
         }
     }

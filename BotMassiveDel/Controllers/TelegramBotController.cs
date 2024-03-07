@@ -1,4 +1,4 @@
-﻿using Infrastructure.TelegramBot.CommandManagers;
+﻿using Infrastructure.TelegramBot.BotManagers;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
 
