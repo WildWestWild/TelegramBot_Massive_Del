@@ -3,7 +3,7 @@ using Infrastructure.Storage.Models;
 using Infrastructure.TelegramBot.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.TelegramBot;
+namespace Infrastructure.TelegramBot.CommandManagers;
 
 public class ContextManager
 {

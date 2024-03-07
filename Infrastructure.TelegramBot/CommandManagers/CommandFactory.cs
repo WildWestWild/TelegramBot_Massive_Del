@@ -1,8 +1,10 @@
 ﻿using Infrastructure.Storage.Models;
+using Infrastructure.TelegramBot.Commands;
 using Infrastructure.TelegramBot.Enums;
+using Infrastructure.TelegramBot.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Infrastructure.TelegramBot.Commands;
+namespace Infrastructure.TelegramBot.CommandManagers;
 
 public class CommandFactory
 {

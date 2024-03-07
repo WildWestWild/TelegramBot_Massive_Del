@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using Infrastructure.TelegramBot.Enums;
 
-namespace Infrastructure.TelegramBot.Enums;
+namespace Infrastructure.TelegramBot.Extensions;
 
 public static class EnumExtensions
 {

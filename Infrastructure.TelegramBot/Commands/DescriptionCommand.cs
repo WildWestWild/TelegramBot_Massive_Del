@@ -1,4 +1,5 @@
-﻿using Infrastructure.TelegramBot.Helpers;
+﻿using Infrastructure.TelegramBot.CommandManagers;
+using Infrastructure.TelegramBot.Helpers;
 using Telegram.Bot;
 
 namespace Infrastructure.TelegramBot.Commands;
