@@ -8,7 +8,7 @@ public static class KeyboardHelper
     private const string ADD_ELEMENT_TEXT = "Добавь элемент";
     private const string DELETE_ELEMENT_TEXT = "Удали элемент";
     private const string UPDATE_ELEMENT_TEXT = "Редактируй элемент";
-    private const string COPY_LINK_TEXT = "Скопируй ссылку на список";
+    private const string COPY_LINK_TEXT = "Дай ссылку на список";
     private const string CANCEL_TEXT = "Отменить действие";
 
     public static ReplyKeyboardMarkup GetKeyboardForConcreteList(string uniqueListName)

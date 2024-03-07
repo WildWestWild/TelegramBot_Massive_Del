@@ -23,6 +23,14 @@ namespace Core.ListActions.Actions
             _logger = logger;
         }
 
+        public async Task<string> GetListNameByGuidLink(string guidLink)
+        {
+            var userInfo = await _db.UserListInfos
+                .AsNoTracking()
+                .FirstAsync(record => EF.Functions.Like(record.Name, $"%{guidLink}"));
+            return userInfo.Name;
+        }
+
         public async Task<UserListElementDTO[]?> GetList(ICommandIdentificator command, CancellationToken token)
         {
             try

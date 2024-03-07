@@ -68,6 +68,7 @@ public class CommandFactory
             CommandType.UpdateElement => typeof(UpdateCommand),
             CommandType.DeleteElement => typeof(DeleteCommand),
             CommandType.StrikingOutElement => typeof(StrikingOutCommand),
+            CommandType.CopyLink => typeof(CopyLinkCommand),
             _ => null
         };
 
@@ -90,7 +91,8 @@ public class CommandFactory
 
     private bool CreateReadListCommand(string commandName, out BaseCommand command)
     {
-        if (commandName.Length >= MIN_SYMBOLS_FOR_UNIQUE_LIST && ReadCommand.FindListInCommandText.IsMatch(commandName))
+        if (commandName.Length >= MIN_SYMBOLS_FOR_UNIQUE_LIST 
+            && (ReadCommand.FindListInCommandText.IsMatch(commandName) || ReadCommand.FindGuidLinkInText.IsMatch(commandName)))
         {
             command = GetCommand(typeof(ReadCommand));
             return true;

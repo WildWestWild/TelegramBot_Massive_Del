@@ -65,5 +65,6 @@ public static class DependencyInjection
         services.AddTransient<ReadCommand>();
         services.AddTransient<StrikingOutCommand>();
         services.AddTransient<CancelCommand>();
+        services.AddTransient<CopyLinkCommand>();
     }
 }

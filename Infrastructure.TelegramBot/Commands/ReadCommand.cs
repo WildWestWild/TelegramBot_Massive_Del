@@ -22,6 +22,10 @@ public class ReadCommand: BaseCommand
         @"\(.*\-G\-[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}\)",
         RegexOptions.Compiled | RegexOptions.Singleline);
     
+    public static Regex FindGuidLinkInText { get; } = new(
+        @"[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}",
+        RegexOptions.Compiled | RegexOptions.Singleline);
+    
     public ReadCommand(ITelegramBotClient botClient, ContextManager contextManager, ReadListAction readListAction) : base(botClient, contextManager)
     {
         _readListAction = readListAction;
@@ -34,6 +38,12 @@ public class ReadCommand: BaseCommand
         var uniqueListName = FindListInCommandText
             .Match(EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText)))
             .Value.TrimStart('(').TrimEnd(')');
+
+        if (string.IsNullOrEmpty(uniqueListName))
+        {
+            var guidLink = FindGuidLinkInText.Match(EnterCommandText).Value;
+            uniqueListName = await _readListAction.GetListNameByGuidLink(guidLink);
+        }
         
         AfterCommandEvent += async () =>
         {
