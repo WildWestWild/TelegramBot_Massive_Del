@@ -2,6 +2,7 @@
 using Core.ListActions.Actions;
 using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Helpers;
+using Infrastructure.TelegramBot.Extensions;
 using Telegram.Bot;
 
 namespace Infrastructure.TelegramBot.Commands;
@@ -43,25 +44,7 @@ public class AddCommand : BaseCommand
         {
             ChatId = chatId,
             Name = UserContext.ListName ?? throw new ArgumentNullException(nameof(UserContext.ListName)),
-            Data = EnterCommandText
-                .Replace("_", "\\_")
-                .Replace("*", "\\*")
-                .Replace("[", "\\[")
-                .Replace("]", "\\]")
-                .Replace("(", "\\(")
-                .Replace(")", "\\)")
-                .Replace("~", "\\~")
-                .Replace("`", "\\`")
-                .Replace(">", "\\>")
-                .Replace("#", "\\#")
-                .Replace("+", "\\+")
-                .Replace("-", "\\-")
-                .Replace("=", "\\=")
-                .Replace("|", "\\|")
-                .Replace("{", "\\{")
-                .Replace("}", "\\}")
-                .Replace(".", "\\.")
-                .Replace("!", "\\!")
+            Data = EnterCommandText.ChangeSymbolsForMarkdownV2()
         };
 
         if (await _addElementToListAction.AddElement(command, token))
