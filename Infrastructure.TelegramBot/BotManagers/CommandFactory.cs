@@ -71,6 +71,7 @@ public class CommandFactory
             CommandType.DeleteElement => typeof(DeleteCommand),
             CommandType.StrikingOutElement => typeof(StrikingOutCommand),
             CommandType.CopyLink => typeof(CopyLinkCommand),
+            CommandType.GetHistory => typeof(GetHistoryCommand),
             _ => null
         };
 

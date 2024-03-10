@@ -1,5 +1,4 @@
-﻿using Infrastructure.Storage;
-using Infrastructure.Storage.DbContext;
+﻿using Infrastructure.Storage.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

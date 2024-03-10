@@ -1,5 +1,4 @@
-﻿using Infrastructure.Storage;
-using Infrastructure.Storage.DbContext;
+﻿using Infrastructure.Storage.DbContext;
 using Infrastructure.Storage.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +6,7 @@ namespace Infrastructure.TelegramBot.BotManagers;
 
 public class HistoryManager
 {
-    private const int TAKE_AND_SKIP_COUNT = 6;
+    private const int TAKE_AND_SKIP_COUNT = 5;
 
     private readonly IDbContext _db;
 

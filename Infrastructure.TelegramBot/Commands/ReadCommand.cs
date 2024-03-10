@@ -51,6 +51,7 @@ public class ReadCommand: BaseCommand
         AfterCommandEvent += async () =>
         {
             await ContextManager.CreateContext(chatId,null, uniqueListName, token);
+            await _historyManager.RemovePointer(chatId, token);
             await _historyManager.AddOrUpdateHistory(chatId, uniqueListName, token);
         };
 

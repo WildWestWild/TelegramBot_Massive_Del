@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Infrastructure.Storage.Models;
 using Infrastructure.TelegramBot.BotManagers;
+using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Extensions;
 using Infrastructure.TelegramBot.Helpers;
 using Telegram.Bot;
@@ -21,20 +22,29 @@ public class GetHistoryCommand: BaseCommand
     public override async Task Process(long chatId, CancellationToken token)
     {
         var userListHistories = await _historyManager.GetHistory(chatId, token);
+        
+        AfterCommandEvent += async () =>
+        {
+            await ContextManager.ChangeContext(chatId, UserContext?.ListName, CommandType.GetHistory, token);
+        };
+        
         Message = PrepareUserListHistoriesToMarkdownV2Message(userListHistories);
-        KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
+        KeyboardMarkup = KeyboardHelper.GetHistoryKeyboard();
         
         await base.Process(chatId, token);
     }
 
     private string PrepareUserListHistoriesToMarkdownV2Message(UserListHistory[] userListHistories)
     {
+        if (userListHistories.Length.Equals(0))
+            return "Нет истории использованных списков. Создавайте списки, либо переходите по ссылке и проссматривайте списки других.";
+        
         StringBuilder message = new StringBuilder();
         foreach (var item in userListHistories)
         {
             message.Append($"Название: {item.ListName.GetOnlyListName()} \n");
-            message.Append($"Последнее использование: {item.LastUseDate.ToString("u")} \n");
-            message.Append($"Ссылка: {item.ListName.GetLink()} \n \n");
+            message.Append($"Последнее использование: {item.LastUseDate.ToString("d").Replace('/', '.')} \n");
+            message.Append($"{item.ListName.GetLink()} \n \n");
         }
 
         return message.ToString();

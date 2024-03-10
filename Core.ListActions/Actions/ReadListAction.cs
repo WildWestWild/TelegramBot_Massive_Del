@@ -1,5 +1,4 @@
 ﻿using Core.ListActions.ActionCommands;
-using Infrastructure.Storage;
 using Core.ListActions.DTO;
 using Core.ListActions.Extensions;
 using Infrastructure.Storage.DbContext;
@@ -65,7 +64,7 @@ namespace Core.ListActions.Actions
                 .Include(
                     join => join.UserListElements.OrderBy(element => element.Number)
                 )
-                .FirstAsync(record => record.ChatId.Equals(identificator.ChatId) && record.Name.Equals(identificator.Name), cancellationToken: token);
+                .FirstAsync(record => record.Name.Equals(identificator.Name), cancellationToken: token);
 
         internal UserListElementDTO[] ResetCache(ICommandIdentificator identificator)
         {

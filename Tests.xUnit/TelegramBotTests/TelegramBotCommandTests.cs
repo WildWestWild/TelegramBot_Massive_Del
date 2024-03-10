@@ -26,25 +26,26 @@ public class TelegramBotCommandTests
         ReadCommentHandling = JsonCommentHandling.Skip
     };
 
-    public TelegramBotCommandTests(CommandFactory commandFactory, ILogger<TelegramBotCommandTests> logger, DbTestContext context)
+    public TelegramBotCommandTests(CommandFactory commandFactory, ILogger<TelegramBotCommandTests> logger,
+        DbTestContext context)
     {
         _commandFactory = commandFactory;
         _logger = logger;
         _context = context;
-        
-        PrepareTestList();
+
+        PrepareTestList(2, 2);
     }
 
-    private void PrepareTestList()
+    private void PrepareTestList(long id, long charId, string? subName = null)
     {
-        if (!_context.UserListInfos.Any(record => record.Id.Equals(2)))
+        if (!_context.UserListInfos.Any(record => record.Id.Equals(id)))
         {
             _context.UserListInfos.Add(new UserListInfo
             {
-                ChatId = 2,
+                ChatId = charId,
                 CreateDate = DateTime.Now,
-                Id = 2,
-                Name = PreparedUniqueListName
+                Id = id,
+                Name = (subName ?? string.Empty) + PreparedUniqueListName
             });
             _context.SaveChanges();
         }

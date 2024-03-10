@@ -10,6 +10,7 @@ public static class KeyboardHelper
     private const string UPDATE_ELEMENT_TEXT = "Редактируй элемент";
     private const string COPY_LINK_TEXT = "Дай ссылку на список";
     private const string CANCEL_TEXT = "Отменить действие";
+    private const string MORE_TEXT = "Ещё";
 
     public static ReplyKeyboardMarkup GetKeyboardForConcreteList(string uniqueListName)
     {
@@ -57,6 +58,23 @@ public static class KeyboardHelper
         return new ReplyKeyboardMarkup(
                 new List<KeyboardButton[]>()
                 {
+                    new KeyboardButton[]
+                    {
+                        new(CANCEL_TEXT)
+                    }
+                })
+            { ResizeKeyboard = true };
+    }
+    
+    public static ReplyKeyboardMarkup GetHistoryKeyboard()
+    {
+        return new ReplyKeyboardMarkup(
+                new List<KeyboardButton[]>()
+                {
+                    new KeyboardButton[]
+                    {
+                        new(MORE_TEXT)
+                    },
                     new KeyboardButton[]
                     {
                         new(CANCEL_TEXT)

@@ -34,5 +34,6 @@ public class TelegramBotDatasets
         yield return new object[] { new TelegramBotDatasets { MessageText = "_, *, [, ], (, ), ~, `, >, #, +, -, =, |, {, }, ., !", ChartId = 2, ExpectedMessageText = "Элемент добавлен!" } };
         yield return new object[] { new TelegramBotDatasets { MessageText = "Отменить действие", ChartId = 2, ExpectedMessageText = "Действие отменено!" } };
         yield return new object[] { new TelegramBotDatasets { MessageText = $"Покажи список \n ({TelegramBotCommandTests.PreparedUniqueListName})", ChartId = 2, ExpectedMessageText = @" \_, \*, \[, \], \(, \), \~, \`, \>, \#, \+, \-, \=, \|, \{, \}, \., \!" } };
+        yield return new object[] { new TelegramBotDatasets { MessageText = "/gethistory", ChartId = 2, ExpectedMessageText = "Название: " } };
     }
 }
