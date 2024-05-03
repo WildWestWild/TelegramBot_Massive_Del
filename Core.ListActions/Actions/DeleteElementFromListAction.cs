@@ -23,10 +23,19 @@ public class DeleteElementFromListAction: BaseAction
         {
             var userInfo = await _readListAction.AddUserInfoWithElementsInContext(command, token);
             
-            _db.UserListElements.Remove(
+            userInfo.UserListElements.Remove(
                 userInfo.UserListElements.First(
                     r=>r.Number.Equals(command.Number))
             );
+
+            var elements = userInfo.UserListElements
+                .OrderBy(r=>r.Number)
+                .ToArray();
+            
+            for (ushort i = 0; i < elements.Length; i++)
+            {
+                elements[i].Number = (ushort)(i + 1);
+            }
             
             AfterActionEvent += (identificator) =>
             {
