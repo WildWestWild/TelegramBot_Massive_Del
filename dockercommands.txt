@@ -1,0 +1,12 @@
+//build
+
+docker build -t dockerimagebotmd .
+
+// run dev
+
+docker run -d -p 41999:80 -p 41998:443 --name dockerbmd -it dockerimagebotmd
+
+// run prod
+
+docker run -d -p 41999:80 -p 41998:443 --name massivedel -it wildwestwild/massivedelbot:latest
+
