@@ -2,16 +2,19 @@
 using Infrastructure.Storage.Models;
 using Infrastructure.TelegramBot.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.TelegramBot.BotManagers;
 
 public class ContextManager
 {
     private readonly IDbContext _db;
+    private readonly ILogger<ContextManager> _logger;
 
-    public ContextManager(IDbContext db)
+    public ContextManager(IDbContext db, ILogger<ContextManager> logger)
     {
         _db = db;
+        _logger = logger;
     }
 
     public Task<UserContext?> GetContext(long chatId, CancellationToken token)
@@ -23,42 +26,58 @@ public class ContextManager
 
     public async Task CreateContext(long chatId, CommandType? commandType, string? listName, CancellationToken token)
     {
-        UserContext context = new UserContext
+        try
         {
-            ChatId = chatId,
-            Command = ConvertCommandType(commandType),
-            ListName = listName
-        };
+            UserContext context = new UserContext
+            {
+                ChatId = chatId,
+                Command = ConvertCommandType(commandType),
+                ListName = listName
+            };
 
-        var oldContext = await _db.UserContexts.FirstOrDefaultAsync(userContext => userContext.ChatId.Equals(chatId), cancellationToken: token);
-        if (oldContext is not null)
-        {
-            await RemoveContext(oldContext, token);
+            var oldContext = await _db.UserContexts.FirstOrDefaultAsync(userContext => userContext.ChatId.Equals(chatId), cancellationToken: token);
+            if (oldContext is not null)
+            {
+                await RemoveContext(oldContext, token);
+            }
+
+            _db.UserContexts.Add(context);
+            await _db.SaveChangesAsync(token);
         }
-
-        _db.UserContexts.Add(context);
-        await _db.SaveChangesAsync(token);
+        catch (Exception e)
+        {
+            _logger.LogError(e, $"[{nameof(CreateContext)}] Method has exception!");
+        }
     }
 
-    public Task ChangeContext(long chatId, CommandType? commandType, CancellationToken token)
-    {
-        var userContext = GetContextByCache(chatId);
-        userContext.Command =  ConvertCommandType(commandType);
-        return _db.SaveChangesAsync(token);
-    }
-    
     public Task ChangeContext(long chatId, string? listName, CommandType? commandType, CancellationToken token)
     {
-        var userContext = GetContextByCache(chatId);
-        userContext.Command = ConvertCommandType(commandType);
-        userContext.ListName = listName;
-        return _db.SaveChangesAsync(token);
+        try
+        {
+            var userContext = GetContextByCache(chatId);
+            userContext.Command = ConvertCommandType(commandType);
+            userContext.ListName = listName;
+            return _db.SaveChangesAsync(token);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, $"[{nameof(ChangeContext)}] Method has exception!");
+            return Task.CompletedTask;
+        }
     }
 
     public Task RemoveContext(UserContext userContext, CancellationToken token)
     {
-        _db.UserContexts.Remove(userContext);
-        return _db.SaveChangesAsync(token);
+        try
+        {
+            _db.UserContexts.Remove(userContext);
+            return _db.SaveChangesAsync(token);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, $"[{nameof(RemoveContext)}] Method has exception!");
+            return Task.CompletedTask;
+        }
     }
     
     private static int? ConvertCommandType(CommandType? commandType)
