@@ -11,8 +11,14 @@ namespace Infrastructure.Storage.DbContext
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder
-                    .UseLoggerFactory(LoggerFactory.Create(settings => settings.SetMinimumLevel(LogLevel.Information)))
+                    .UseLoggerFactory(LoggerFactory.Create(settings =>
+                    {
+                        settings.SetMinimumLevel(LogLevel.Information);
+                    }))
                     .UseSqlite(@$"Data Source=massive_del.db");
+#if DEBUG
+                optionsBuilder.LogTo(Console.WriteLine);
+#endif
             }
         }
         public DbSet<UserListInfo> UserListInfos { get; set; }
@@ -24,7 +30,7 @@ namespace Infrastructure.Storage.DbContext
         public DbSet<UserListHistory> UserListHistories { get; set; }
         
         public DbSet<UserListHistoryPointer> UserListHistoryPointers { get; set; }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserListInfo>(entity =>

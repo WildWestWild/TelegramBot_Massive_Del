@@ -35,6 +35,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//app.ApplyEfSqlLiteMigrations();
+app.Services.ApplyEfSqlLiteMigrations();
 
 app.Run();

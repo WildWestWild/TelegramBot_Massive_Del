@@ -17,18 +17,17 @@ public class HistoryManager
 
     public async Task<UserListHistory[]> GetHistory(long chatId, CancellationToken token)
     {
-        var query = _db.UserListHistories
+        IOrderedQueryable<UserListHistory> query = _db.UserListHistories
             .Where(record => record.ChatId.Equals(chatId))
-            .OrderByDescending(date => date.LastUseDate)
-            .Take(TAKE_AND_SKIP_COUNT);
-        
+            .OrderByDescending(date => date.LastUseDate);
+
         var pointer = await _db.UserListHistoryPointers.FirstOrDefaultAsync(
             record => record.ChatId.Equals(chatId), cancellationToken: token
             );
         
         if (pointer is not null)
         {
-            query = query.Skip(pointer.OffSet);
+            query = (IOrderedQueryable<UserListHistory>) query.Skip(pointer.OffSet);
             pointer.OffSet += TAKE_AND_SKIP_COUNT;
         }
         else
@@ -44,7 +43,9 @@ public class HistoryManager
         
         await _db.SaveChangesAsync(token);
         
-        return await query.ToArrayAsync(token);
+        return await query
+            .Take(TAKE_AND_SKIP_COUNT)
+            .ToArrayAsync(token);
     }
 
     public async Task AddOrUpdateHistory(long chatId, string listName, CancellationToken token)
