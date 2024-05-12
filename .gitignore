@@ -401,3 +401,6 @@ FodyWeavers.xsd
 #Token Ignore
 BotTokenFile.txt
 SecretTokenFile.txt
+ngrok.exe
+.vscode/launch.json
+.vscode/tasks.json
