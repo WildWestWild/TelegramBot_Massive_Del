@@ -32,6 +32,24 @@ public class UpdateCommand: BaseCommand
     public override async Task Process(long chatId, CancellationToken token)
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
+
+        if (EnterCommandText is null) throw new ArgumentNullException(nameof(EnterCommandText));
+        
+        var command = new AddOrUpdateElementCommand
+        {
+            ChatId = chatId,
+            Name = UserContext.ListName ?? throw new ArgumentNullException(nameof(UserContext.ListName))
+        };
+        
+        if (await _commandValidator.CheckMaxCountSymbolsInList(EnterCommandText, command, token))
+        {
+            Message = "Невозможно добавить элемент, слишком много символов в списке!";
+
+            KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
+            
+            await base.Process(chatId, token);
+            return;
+        }
         
         if (UserContext.Command is null)
         {
@@ -48,16 +66,10 @@ public class UpdateCommand: BaseCommand
         }
         
         KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
-        
-        var command = new AddOrUpdateElementCommand
-        {
-            ChatId = chatId,
-            Name = UserContext.ListName ?? throw new ArgumentNullException(nameof(UserContext.ListName))
-        };
 
         var match = _parseUpdateRegex.Match(EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText)));
 
-        if (!match.Success || await CheckValidNumber(match, command, token))
+        if (!match.Success || await CheckInvalidNumber(match, command, token))
         {
             Message = "Некорректный номер элемента! ";
 
@@ -94,6 +106,6 @@ public class UpdateCommand: BaseCommand
         _updateElementFromListAction.OnAfterActionEvent(command);
     }
 
-    private Task<bool> CheckValidNumber(Match match, ICommandIdentificator commandIdentificator, CancellationToken token)
-        => _commandValidator.CheckValidNumber(match.Groups[1].Value, commandIdentificator, token);
+    private Task<bool> CheckInvalidNumber(Match match, ICommandIdentificator commandIdentificator, CancellationToken token)
+        => _commandValidator.CheckInvalidNumber(match.Groups[1].Value, commandIdentificator, token);
 }

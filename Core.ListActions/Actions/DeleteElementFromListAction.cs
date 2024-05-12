@@ -22,11 +22,12 @@ public class DeleteElementFromListAction: BaseAction
         try
         {
             var userInfo = await _readListAction.AddUserInfoWithElementsInContext(command, token);
+
+            var elementForDelete = userInfo.UserListElements.First(r => r.Number.Equals(command.Number));
             
-            userInfo.UserListElements.Remove(
-                userInfo.UserListElements.First(
-                    r=>r.Number.Equals(command.Number))
-            );
+            userInfo.UserListElements.Remove(elementForDelete);
+
+            userInfo.CountSymbolsInList -= elementForDelete.Data.Length;
 
             var elements = userInfo.UserListElements
                 .OrderBy(r=>r.Number)

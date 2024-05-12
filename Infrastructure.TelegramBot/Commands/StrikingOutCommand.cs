@@ -47,7 +47,7 @@ public class StrikingOutCommand: BaseCommand
             Name = UserContext.ListName ?? throw new ArgumentNullException(nameof(UserContext.ListName))
         };
         
-        if (await _commandValidator.CheckValidNumber(EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText)), command, token))
+        if (await _commandValidator.CheckInvalidNumber(EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText)), command, token))
         {
             Message = "Некорректный номер элемента! ";
 

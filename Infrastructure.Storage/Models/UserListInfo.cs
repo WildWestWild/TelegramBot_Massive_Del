@@ -20,6 +20,11 @@
         /// Дата создания
         /// </summary>
         public DateTime CreateDate { get; set; }
+        
+        /// <summary>
+        /// Кол-во символов во всех элементах списка
+        /// </summary>
+        public long CountSymbolsInList { get; set; }
 
         /// <summary>
         /// Коллекция из элементов списка

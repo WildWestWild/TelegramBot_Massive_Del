@@ -59,6 +59,12 @@ namespace Core.ListActions.Actions
             return userInfo.UserListElements.Count;
         }
 
+        public Task<long> GetCountSymbolsInList(ICommandIdentificator command, CancellationToken token) =>
+            _db.UserListInfos
+                .Where(r => r.Name.Equals(command.Name))
+                .Select(r => r.CountSymbolsInList)
+                .FirstAsync(cancellationToken: token);
+
         internal Task<UserListInfo> AddUserInfoWithElementsInContext(ICommandIdentificator identificator, CancellationToken token) =>
             _db.UserListInfos
                 .Include(

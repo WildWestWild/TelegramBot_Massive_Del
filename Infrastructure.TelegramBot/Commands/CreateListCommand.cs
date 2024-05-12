@@ -47,7 +47,7 @@ public class CreateListCommand : BaseCommand
 
         if (await _addListAction.AddList(addListCommand, token))
         {
-            Message = $"Список с названием '{uniqueListName.GetOnlyListName()}' успешно создан!";
+            Message = $"Список с названием '{uniqueListName.GetOnlyListName()}' успешно создан! \n(В списке не может быть более 15-ти тысяч символов)";
             KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(uniqueListName);
 
             AfterCommandEvent += async () =>

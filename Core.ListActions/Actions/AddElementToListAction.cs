@@ -32,6 +32,8 @@ public class AddElementToListAction: BaseAction
                     : userListInfo.UserListElements.Count + 1),
                 Data = command.Data
             });
+            
+            userListInfo.CountSymbolsInList += command.Data.Length;
 
             AfterActionEvent += (identificator) =>
             {

@@ -22,9 +22,11 @@ public class UpdateElementFromListAction: BaseAction
     {
         try
         {
-            await _readListAction.AddUserInfoWithElementsInContext(command, token);
+            var userListInfo = await _readListAction.AddUserInfoWithElementsInContext(command, token);
             var element = _db.UserListElements.Local.First(r => r.Number.Equals(command.Number));
+            userListInfo.CountSymbolsInList -= element.Data.Length;
             element.Data = command.Data;
+            userListInfo.CountSymbolsInList += command.Data.Length;
             
             AfterActionEvent += (identificator) =>
             {

@@ -41,23 +41,22 @@ public class TelegramBotCommandTests
         if (!_context.UserListInfos.Any(record => record.Id.Equals(id)))
         {
             _context.UserListInfos.Add(new UserListInfo
-            {
-                ChatId = charId,
-                CreateDate = DateTime.Now,
+            { 
                 Id = id,
                 Name = (subName ?? string.Empty) + PreparedUniqueListName
-            });
+            });       
             _context.SaveChanges();
         }
     }
 
     private async Task ProcessCommandTest(string commandText, long chatId, string expectedMessageText)
     {
+        _logger.LogInformation($"CommandText = [{commandText}], ChatId = [{chatId}], Expected = [{expectedMessageText}]");
         var command = await _commandFactory.CreateCommand(commandText, chatId, _cts.Token);
         await command.Process(chatId, _cts.Token);
         command.OnAfterCommandEvent();
+        _logger.LogInformation($"CommandType = [{command.GetType().Name}], Actual = [{command.Message}]");
         Assert.Contains(expectedMessageText, command.Message);
-        _logger.LogInformation($"CommandText = [{commandText}], ChatId = [{chatId}], Expected = [{expectedMessageText}], Actual = [{command.Message}]");
         _logger.LogInformation($"UserContext = {JsonSerializer.Serialize(_context.UserContexts.FirstOrDefault(r=>r.ChatId.Equals(chatId)) ?? default, _serializerOptions)}");
         _logger.LogInformation($"UserInfo = {JsonSerializer.Serialize(_context.UserListInfos.FirstOrDefault(r=>r.ChatId.Equals(chatId)) ?? default, _serializerOptions)}");
     }

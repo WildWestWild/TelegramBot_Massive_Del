@@ -52,6 +52,8 @@ namespace Tests.xUnit
         public async Task CrudOperationsWithListTest()
         {
             #region Create
+            
+            _logger.LogInformation("Create start");
 
             foreach (ushort number in Enumerable.Range(1, 10))
             {
@@ -66,14 +68,17 @@ namespace Tests.xUnit
             _addElementToListAction.OnAfterActionEvent(Command);
 
             var addElementResult = await _readListAction.GetList(Command, _cancellationTokenSource.Token);
-            _logger.LogInformation("Create start");
+            
             Assert.NotNull(addElementResult);
             Assert.Equal(10, addElementResult.Length);
             Assert.Equal(10, addElementResult.Select(r=> Convert.ToInt32(r.Data)).Sum());
+            
             _logger.LogInformation("Create done");
             #endregion
 
             #region Update
+            
+            _logger.LogInformation("Update start");
 
             foreach (ushort number in Enumerable.Range(1, 10))
             {
@@ -88,16 +93,20 @@ namespace Tests.xUnit
             _updateElementFromListAction.OnAfterActionEvent(Command);
             
             var updateElementResult = await _readListAction.GetList(Command, _cancellationTokenSource.Token);
-            _logger.LogInformation("Update start");
+            
             Assert.NotNull(updateElementResult);
             Assert.Equal(10, updateElementResult.Length);
             Assert.Equal(20, updateElementResult.Select(r=> Convert.ToInt32(r.Data)).Sum());
+            
             _logger.LogInformation("Update done");
+            
             #endregion
             
             #region Delete
+            
+            _logger.LogInformation("Delete start");
 
-            foreach (ushort number in Enumerable.Range(1, 10))
+            foreach (ushort number in Enumerable.Range(1, 10).Reverse())
             {
                 await _deleteElementFromListAction.DeleteFromList(new DeleteElementCommand
                 {
@@ -109,10 +118,12 @@ namespace Tests.xUnit
             _deleteElementFromListAction.OnAfterActionEvent(Command);
             
             var deleteActionResult = await _readListAction.GetList(Command, _cancellationTokenSource.Token);
-            _logger.LogInformation("Delete start");
+           
             Assert.NotNull(deleteActionResult);
             Assert.Equal(0, deleteActionResult.Length);
+            
             _logger.LogInformation("Delete done");
+            
             #endregion
         }
     }
