@@ -69,5 +69,5 @@ public class CreateListCommand : BaseCommand
         _addListAction.OnAfterActionEvent(addListCommand);
     }
 
-    private string CreateUniqueListName(string userListName) => $"{userListName}-G-{Guid.NewGuid()}";
+    private string CreateUniqueListName(string userListName) => $"{userListName.ChangeSymbolsForMarkdownV2()}-G-{Guid.NewGuid()}";
 }
