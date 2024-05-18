@@ -1,4 +1,5 @@
 ﻿using Core.ListActions.Actions;
+using Core.ListActions.WorkerServices;
 using Infrastructure.Storage.DbContext;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,5 +18,7 @@ public static class DependencyInjection
         serviceCollection.AddTransient<DeleteElementFromListAction>();
         serviceCollection.AddTransient<UpdateElementFromListAction>();
         serviceCollection.AddTransient<StrikingOutElementAction>();
+        
+        serviceCollection.AddHostedService<CleanUnusedListWorkerService>();
     }
 }
