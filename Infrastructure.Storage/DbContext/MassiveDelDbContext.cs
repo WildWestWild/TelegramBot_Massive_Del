@@ -15,7 +15,7 @@ namespace Infrastructure.Storage.DbContext
                     {
                         settings.SetMinimumLevel(LogLevel.Information);
                     }))
-                    .UseSqlite(@$"Data Source=massive_del.db");
+                    .UseSqlite(@"Data Source=massive_del.db");
 #if DEBUG
                 optionsBuilder.LogTo(Console.WriteLine);
 #endif

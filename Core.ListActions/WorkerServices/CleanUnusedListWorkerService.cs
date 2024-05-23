@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.ListActions.WorkerServices;
 
-public class CleanUnusedListWorkerService: IHostedService
+public class CleanUnusedListWorkerService: BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<CleanUnusedListWorkerService> _logger;
@@ -17,31 +17,46 @@ public class CleanUnusedListWorkerService: IHostedService
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
-    
-    public async Task StartAsync(CancellationToken cancellationToken)
+
+    protected override Task ExecuteAsync(CancellationToken stoppingToken) => UseCleanScriptAsync(stoppingToken);
+
+    private async Task UseCleanScriptAsync(CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            using var scope = _serviceProvider.CreateScope();
-            
-            var db = scope.ServiceProvider.GetRequiredService<IDbContext>();
-            
-            var resultCommand = await db.Database.ExecuteSqlRawAsync(GetCleanAllListInfoSqlScript(), cancellationToken: cancellationToken);
-            
-            if (!resultCommand.Equals(default))
-                _logger.LogError($"[{nameof(StartAsync)}] ExecuteSqlRawAsync return code - {resultCommand}");
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<IDbContext>();
+                await using (var transaction = await db.Database.BeginTransactionAsync(cancellationToken))
+                {
+                    try
+                    {
+                        var resultCommand = await db.Database.ExecuteSqlRawAsync(GetCleanAllListInfoSqlScript(),
+                            cancellationToken: cancellationToken);
+
+                        if (!resultCommand.Equals(default))
+                            throw new Exception($"Code = {resultCommand}");
+
+                        await transaction.CommitAsync(cancellationToken);
+                        _logger.LogDebug($"[{nameof(StartAsync)}] Commit transaction!");
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e, $"[{nameof(StartAsync)}] ExecuteSqlRawAsync return code -> {e.Message}");
+                        await transaction.RollbackAsync(cancellationToken);
+                        _logger.LogError(e, $"[{nameof(StartAsync)}] Reject transaction!");
+                    }
+                }
+            }
             
             await Task.Delay(_taskDelay, cancellationToken);
         }
     }
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
+    
     private string GetCleanAllListInfoSqlScript()
     {
         return @"
-                BEGIN TRANSACTION;
-
+                
                 CREATE TEMPORARY TABLE UnusableListHistories AS
                 SELECT H.ListName,
                        H.ChatId
@@ -81,7 +96,6 @@ public class CleanUnusedListWorkerService: IHostedService
                         AND UserListInfos.ChatId = UH.ChatId
                 );
 
-                DROP TABLE UnusableListHistories;
-                COMMIT;";
+                DROP TABLE UnusableListHistories;";
     }
 }
