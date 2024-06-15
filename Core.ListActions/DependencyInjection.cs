@@ -18,7 +18,8 @@ public static class DependencyInjection
         serviceCollection.AddTransient<DeleteElementFromListAction>();
         serviceCollection.AddTransient<UpdateElementFromListAction>();
         serviceCollection.AddTransient<StrikingOutElementAction>();
-        
+#if !DEBUG
         serviceCollection.AddHostedService<CleanUnusedListWorkerService>();
+#endif
     }
 }

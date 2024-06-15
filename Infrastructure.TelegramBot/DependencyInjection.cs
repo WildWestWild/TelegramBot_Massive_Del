@@ -4,6 +4,7 @@ using Infrastructure.TelegramBot.Options;
 using Infrastructure.TelegramBot.Validators;
 using Infrastructure.TelegramBot.WorkerServices;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 
 namespace Infrastructure.TelegramBot;
@@ -34,10 +35,9 @@ public static class DependencyInjection
             
         services.AddHostedService(provider =>
         {
-            var secretToken = File.ReadAllText(_pathToSecretToken);
-            var webhookAddress = $"{botOptions.HostAddress}{botOptions.Route}";
             var telegramClient = provider.GetRequiredService<ITelegramBotClient>();
-            return new ConfigureWebhookWorkerService(secretToken, webhookAddress, telegramClient);
+            var logger = provider.GetRequiredService<ILogger<ConfigureLongPollingWorkerService>>();
+            return new ConfigureLongPollingWorkerService(telegramClient, provider, logger);
         });
 
         #endregion
