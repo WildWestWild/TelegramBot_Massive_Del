@@ -12,5 +12,13 @@ docker run -d -p 41999:8080 -p 80:80 --name massivedel -it wildwestwild/dockerim
 
 // docker push
 
+docker tag dockerimagebotmd wildwestwild/dockerimagebotmd
+
+docker push wildwestwild/dockerimagebotmd:latest
+
+
+
+
+
 
 

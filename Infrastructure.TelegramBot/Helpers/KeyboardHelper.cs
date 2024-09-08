@@ -9,7 +9,7 @@ public static class KeyboardHelper
     private const string DELETE_ELEMENT_TEXT = "Удали элемент";
     private const string UPDATE_ELEMENT_TEXT = "Редактируй элемент";
     private const string COPY_LINK_TEXT = "Дай ссылку на список";
-    private const string CANCEL_TEXT = "Отменить действие";
+    private const string CANCEL_TEXT = "Завершить действие";
     private const string MORE_TEXT = "Ещё";
 
     public static ReplyKeyboardMarkup GetKeyboardForConcreteList(string uniqueListName)

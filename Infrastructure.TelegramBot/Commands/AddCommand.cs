@@ -4,6 +4,7 @@ using Infrastructure.TelegramBot.BotManagers;
 using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Helpers;
 using Infrastructure.TelegramBot.Extensions;
+using Infrastructure.TelegramBot.Notifications;
 using Infrastructure.TelegramBot.Validators;
 using Telegram.Bot;
 
@@ -13,12 +14,14 @@ public class AddCommand : BaseCommand
 {
     private readonly AddElementToListAction _addElementToListAction;
     private readonly CommandValidator _commandValidator;
+    private readonly NotificationManager _notificationManager;
 
     public AddCommand(ITelegramBotClient botClient, ContextManager contextManager,
-        AddElementToListAction addElementToListAction, CommandValidator commandValidator) : base(botClient, contextManager)
+        AddElementToListAction addElementToListAction, CommandValidator commandValidator, NotificationManager notificationManager) : base(botClient, contextManager)
     {
         _addElementToListAction = addElementToListAction;
         _commandValidator = commandValidator;
+        _notificationManager = notificationManager;
     }
 
     public override bool IsNeedSetEnterCommandText => true;
@@ -50,11 +53,12 @@ public class AddCommand : BaseCommand
 
         if (UserContext.Command is null)
         {
-            Message = "Введите элемент (чтобы выйти из режима записи в список, нажмите 'Отменить действие'):";
+            Message = "Введите элемент (чтобы выйти из режима записи в список, нажмите 'Завершить действие'):";
 
             AfterCommandEvent += async () =>
             {
                 await ContextManager.ChangeContext(chatId, UserContext.ListName, CommandType.AddElement, token);
+                await _notificationManager.SendNotifications(UserContext, NotificationType.Add, command.Data);
             };
 
             await base.Process(chatId, token);

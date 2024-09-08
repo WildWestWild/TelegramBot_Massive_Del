@@ -40,7 +40,7 @@ public class ReadCommand: BaseCommand
     {
         var uniqueListName = FindListInCommandText
             .Match(EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText)))
-            .Value.TrimStart('(').TrimEnd(')');
+            .Value.TrimStart('(').TrimEnd(')');    
 
         if (string.IsNullOrEmpty(uniqueListName))
         {
@@ -55,6 +55,11 @@ public class ReadCommand: BaseCommand
             await _historyManager.AddOrUpdateHistory(chatId, uniqueListName, token);
         };
 
+        await ReadListInternal(chatId, uniqueListName, token);
+    }
+
+    internal async Task ReadListInternal(long chatId, string uniqueListName, CancellationToken token)
+    {
         ReadListCommand command = new ReadListCommand
         {
             ChatId = chatId,

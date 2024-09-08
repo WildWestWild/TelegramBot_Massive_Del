@@ -33,10 +33,10 @@ public class TelegramBotCommandTests
         _logger = logger;
         _context = context;
 
-        PrepareTestList(2, 2);
+        PrepareTestList(2);
     }
 
-    private void PrepareTestList(long id, long charId, string? subName = null)
+    private void PrepareTestList(long id, string? subName = null)
     {
         if (!_context.UserListInfos.Any(record => record.Id.Equals(id)))
         {

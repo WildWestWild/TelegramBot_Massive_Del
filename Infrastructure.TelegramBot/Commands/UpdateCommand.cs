@@ -4,6 +4,7 @@ using Core.ListActions.Actions;
 using Infrastructure.TelegramBot.BotManagers;
 using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Helpers;
+using Infrastructure.TelegramBot.Notifications;
 using Infrastructure.TelegramBot.Validators;
 using Telegram.Bot;
 
@@ -13,6 +14,7 @@ public class UpdateCommand: BaseCommand
 {
     private readonly UpdateElementFromListAction _updateElementFromListAction;
     private readonly CommandValidator _commandValidator;
+    private readonly NotificationManager _notificationManager;
 
     private readonly Regex _parseUpdateRegex = new("(\\d+)\\s(.*)", RegexOptions.Compiled);
 
@@ -20,11 +22,13 @@ public class UpdateCommand: BaseCommand
         ITelegramBotClient botClient, 
         ContextManager contextManager,
         UpdateElementFromListAction updateElementFromListAction,
-        CommandValidator commandValidator
+        CommandValidator commandValidator,
+        NotificationManager notificationManager
         ) : base(botClient, contextManager)
     {
         _updateElementFromListAction = updateElementFromListAction;
         _commandValidator = commandValidator;
+        _notificationManager = notificationManager;
     }
 
     public override bool IsNeedSetEnterCommandText => true;
@@ -59,6 +63,7 @@ public class UpdateCommand: BaseCommand
             AfterCommandEvent += async () =>
             {
                 await ContextManager.ChangeContext(chatId, UserContext.ListName, CommandType.UpdateElement, token);
+                await _notificationManager.SendNotifications(UserContext, NotificationType.Update, command.Data, command.Number);
             };
 
             await base.Process(chatId, token);

@@ -55,6 +55,7 @@ public static class DependencyInjection
         services.AddTransient<ContextManager>();
         services.AddTransient<CommandValidator>();
         services.AddTransient<HistoryManager>();
+        services.AddTransient<NotificationManager>();
             
         services.AddTransient<NotFoundCommand>();
         services.AddTransient<StartCommand>();

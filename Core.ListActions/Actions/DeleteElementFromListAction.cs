@@ -17,7 +17,7 @@ public class DeleteElementFromListAction: BaseAction
         _logger = logger;
     }
 
-    public async Task<bool> DeleteFromList(DeleteElementCommand command, CancellationToken token)
+    public async Task<string?> DeleteFromList(DeleteElementCommand command, CancellationToken token)
     {
         try
         {
@@ -43,12 +43,12 @@ public class DeleteElementFromListAction: BaseAction
                 _readListAction.ResetCache(identificator);
             };
 
-            return await _db.SaveChangesAsync(token) > 0;
+            return (await _db.SaveChangesAsync(token) > 0) ? elementForDelete.Data : null;
         }
         catch (Exception e)
         {
             _logger.LogError(e, $"[{nameof(DeleteFromList)}] Delete element failed for command. ChatId = {command.ChatId}, Name = {command.Name}, Number = {command.Number}");
-            return false;
+            return null;
         }
     }
 }

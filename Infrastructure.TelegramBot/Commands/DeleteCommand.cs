@@ -3,6 +3,7 @@ using Core.ListActions.Actions;
 using Infrastructure.TelegramBot.BotManagers;
 using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Helpers;
+using Infrastructure.TelegramBot.Notifications;
 using Infrastructure.TelegramBot.Validators;
 using Telegram.Bot;
 
@@ -12,16 +13,19 @@ public class DeleteCommand: BaseCommand
 {
     private readonly DeleteElementFromListAction _deleteElementFromListAction;
     private readonly CommandValidator _commandValidator;
+    private readonly NotificationManager _notificationManager;
     public override bool IsNeedSetEnterCommandText => true;
     
     public DeleteCommand(
         ITelegramBotClient botClient, 
         ContextManager contextManager, 
         DeleteElementFromListAction deleteElementFromListAction,
-        CommandValidator commandValidator) : base(botClient, contextManager)
+        CommandValidator commandValidator,
+        NotificationManager notificationManager) : base(botClient, contextManager)
     {
         _deleteElementFromListAction = deleteElementFromListAction;
         _commandValidator = commandValidator;
+        _notificationManager = notificationManager;
     }
 
     public override async Task Process(long chatId, CancellationToken token)
@@ -62,13 +66,15 @@ public class DeleteCommand: BaseCommand
 
         command.Number = Convert.ToUInt16(EnterCommandText);
 
-        if (await _deleteElementFromListAction.DeleteFromList(command, token))
+        string? elementForDeleteData;
+        if ((elementForDeleteData = await _deleteElementFromListAction.DeleteFromList(command, token)) is not null)
         {
             Message = "Элемент удалён!";
 
             AfterCommandEvent += async () =>
             {
                 await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
+                await _notificationManager.SendNotifications(UserContext, NotificationType.Remove, elementForDeleteData, command.Number);
             };
         }
         else

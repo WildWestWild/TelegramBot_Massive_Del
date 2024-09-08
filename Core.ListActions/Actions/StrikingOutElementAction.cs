@@ -18,7 +18,7 @@ public class StrikingOutElementAction: BaseAction
         _logger = logger;
     }
     
-    public async Task<bool> StrikingOutElement(AddOrUpdateElementCommand command, CancellationToken token)
+    public async Task<string?> StrikingOutElement(AddOrUpdateElementCommand command, CancellationToken token)
     {
         try
         {
@@ -31,12 +31,14 @@ public class StrikingOutElementAction: BaseAction
                 _readListAction.ResetCache(identificator);
             };
             
-            return await _db.SaveChangesAsync(token) > 0;
+            
+            
+            return (await _db.SaveChangesAsync(token) > 0) ? element.Data : null;
         }
         catch (Exception e)
         {
             _logger.LogError(e, $"[{nameof(StrikingOutElement)}] Fail to striking out. Command = {JsonSerializer.Serialize(command)}");
-            return false;
+            return null;
         }
     }
 }

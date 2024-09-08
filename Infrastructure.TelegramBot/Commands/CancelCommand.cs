@@ -7,11 +7,13 @@ namespace Infrastructure.TelegramBot.Commands;
 
 public class CancelCommand: BaseCommand
 {
+    private readonly ReadCommand _readCommand;
     private readonly HistoryManager _historyManager;
-    public static bool IsNeedToUseCancelCommand(string message) => message.Equals("Отменить действие");
+    public static bool IsNeedToUseCancelCommand(string message) => message.Equals("Завершить действие");
     
-    public CancelCommand(ITelegramBotClient botClient, ContextManager contextManager, HistoryManager historyManager) : base(botClient, contextManager)
+    public CancelCommand(ITelegramBotClient botClient, ReadCommand readReadCommand, ContextManager contextManager, HistoryManager historyManager) : base(botClient, contextManager)
     {
+        _readCommand = readReadCommand;
         _historyManager = historyManager;
     }
 
@@ -22,13 +24,8 @@ public class CancelCommand: BaseCommand
         KeyboardMarkup = (UserContext?.ListName != null)
             ? KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName)
             : KeyboardHelper.GetStartKeyboard();
-
-        if (EnterCommandText is not null)
-        {
-            Message = EnterCommandText;
-        }
-
-        Message += "Действие отменено!";
+        
+        Message += "Действие завершено!";
 
         if (UserContext is not null)
         {
@@ -41,8 +38,10 @@ public class CancelCommand: BaseCommand
                     await ContextManager.RemoveContext(UserContext, token);
                 else
                     await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
-                
             };
+
+            if (UserContext.ListName is not null)
+                return _readCommand.ReadListInternal(chatId, UserContext.ListName, token);
         }
         
         return base.Process(chatId, token);

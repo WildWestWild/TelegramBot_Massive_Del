@@ -3,6 +3,7 @@ using Core.ListActions.Actions;
 using Infrastructure.TelegramBot.BotManagers;
 using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Helpers;
+using Infrastructure.TelegramBot.Notifications;
 using Infrastructure.TelegramBot.Validators;
 using Telegram.Bot;
 
@@ -12,11 +13,19 @@ public class StrikingOutCommand: BaseCommand
 {
     private readonly StrikingOutElementAction _strikingOutElementAction;
     private readonly CommandValidator _commandValidator;
+    private readonly NotificationManager _notificationManager;
 
-    public StrikingOutCommand(ITelegramBotClient botClient, StrikingOutElementAction strikingOutElementAction, CommandValidator commandValidator,  ContextManager contextManager) : base(botClient, contextManager)
+    public StrikingOutCommand(
+        ITelegramBotClient botClient, 
+        StrikingOutElementAction strikingOutElementAction, 
+        CommandValidator commandValidator,  
+        ContextManager contextManager, 
+        NotificationManager notificationManager
+        ) : base(botClient, contextManager)
     {
         _strikingOutElementAction = strikingOutElementAction;
         _commandValidator = commandValidator;
+        _notificationManager = notificationManager;
     }
 
     public override bool IsNeedSetEnterCommandText => true;
@@ -61,14 +70,15 @@ public class StrikingOutCommand: BaseCommand
         }
 
         command.Number = Convert.ToUInt16(EnterCommandText);
-        
-        if (await _strikingOutElementAction.StrikingOutElement(command, token))
+        string? dataElement;
+        if ((dataElement = await _strikingOutElementAction.StrikingOutElement(command, token)) is not null)
         {
             Message = "Элемент вычеркнут!";
 
             AfterCommandEvent += async () =>
             {
                 await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
+                await _notificationManager.SendNotifications(UserContext, NotificationType.StrikingOut, dataElement);
             };
         }
         else
