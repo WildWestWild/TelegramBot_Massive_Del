@@ -58,7 +58,6 @@ public class AddCommand : BaseCommand
             AfterCommandEvent += async () =>
             {
                 await ContextManager.ChangeContext(chatId, UserContext.ListName, CommandType.AddElement, token);
-                await _notificationManager.SendNotifications(UserContext, NotificationType.Add, command.Data);
             };
 
             await base.Process(chatId, token);
@@ -68,6 +67,11 @@ public class AddCommand : BaseCommand
         if (await _addElementToListAction.AddElement(command, token))
         {
             Message = "Элемент добавлен!";
+            
+            AfterCommandEvent += async () =>
+            {
+                await _notificationManager.SendNotifications(UserContext, NotificationType.Add, command.Data);
+            };
         }
         else
         {

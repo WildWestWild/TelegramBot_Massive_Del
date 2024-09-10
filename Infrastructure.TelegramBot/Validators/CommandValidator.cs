@@ -16,7 +16,7 @@ public class CommandValidator
     public async Task<bool> CheckInvalidNumber(string message, ICommandIdentificator commandIdentificator, CancellationToken token)
     {
         var numberOfElement = Convert.ToUInt16(message);
-        return numberOfElement < 1 &&
+        return numberOfElement < 1 ||
                numberOfElement > await _readListAction.GetCountElements(commandIdentificator, token);
     }
 

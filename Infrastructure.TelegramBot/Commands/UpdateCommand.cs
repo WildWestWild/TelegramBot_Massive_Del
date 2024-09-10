@@ -55,34 +55,27 @@ public class UpdateCommand: BaseCommand
             return;
         }
         
+        KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
+        
         if (UserContext.Command is null)
         {
             Message = "Введите номер элемента и текст в формате - Номер элемента, пробел, текст. Например: (3 Привет,Мир!)";
-            KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
 
             AfterCommandEvent += async () =>
             {
                 await ContextManager.ChangeContext(chatId, UserContext.ListName, CommandType.UpdateElement, token);
-                await _notificationManager.SendNotifications(UserContext, NotificationType.Update, command.Data, command.Number);
             };
 
             await base.Process(chatId, token);
             return;
         }
-        
-        KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
         var match = _parseUpdateRegex.Match(EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText)));
 
         if (!match.Success || await CheckInvalidNumber(match, command, token))
         {
             Message = "Некорректный номер элемента! ";
-
-            AfterCommandEvent += async () =>
-            {
-                await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
-            };
-
+            
             await base.Process(chatId, token);
             return;
         }
@@ -96,7 +89,7 @@ public class UpdateCommand: BaseCommand
 
             AfterCommandEvent += async () =>
             {
-                await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
+                await _notificationManager.SendNotifications(UserContext, NotificationType.Update, command.Data, command.Number);
             };
         }
         else

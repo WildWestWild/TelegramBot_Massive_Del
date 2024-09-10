@@ -33,12 +33,13 @@ public class StrikingOutCommand: BaseCommand
     public override async Task Process(long chatId, CancellationToken token)
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
-
+        
+        KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
+        
         if (UserContext.Command is null)
         {
-            Message = "Введите номер элемента (если хотите отменить вычеркивание, используйте это действия на вычеркнутый элемент): ";
-            KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
-
+            Message = "Введите номер элемента: \n ! Чтобы выйти из режима записи в список, нажмите 'Завершить действие' ! \n ! Если хотите отменить вычеркивание, используйте это действия на вычеркнутый элемент !";
+            
             AfterCommandEvent += async () =>
             {
                 await ContextManager.ChangeContext(chatId, UserContext.ListName, CommandType.StrikingOutElement, token);
@@ -47,9 +48,7 @@ public class StrikingOutCommand: BaseCommand
             await base.Process(chatId, token);
             return;
         }
-        
-        KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
-        
+
         var command = new AddOrUpdateElementCommand
         {
             ChatId = chatId,
@@ -59,12 +58,7 @@ public class StrikingOutCommand: BaseCommand
         if (await _commandValidator.CheckInvalidNumber(EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText)), command, token))
         {
             Message = "Некорректный номер элемента! ";
-
-            AfterCommandEvent += async () =>
-            {
-                await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
-            };
-
+            
             await base.Process(chatId, token);
             return;
         }
@@ -77,7 +71,6 @@ public class StrikingOutCommand: BaseCommand
 
             AfterCommandEvent += async () =>
             {
-                await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
                 await _notificationManager.SendNotifications(UserContext, NotificationType.StrikingOut, dataElement);
             };
         }
