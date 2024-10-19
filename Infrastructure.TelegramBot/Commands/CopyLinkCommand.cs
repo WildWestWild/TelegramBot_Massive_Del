@@ -6,7 +6,7 @@ namespace Infrastructure.TelegramBot.Commands;
 
 public class CopyLinkCommand: BaseCommand
 {
-    public static string BotLink { get; } = "*Ссылка на список -> __{0}__:*\nhttps://t.me/Massive\\_Del\\_bot?start=";
+    public static string BotLink { get; } = "*Ссылка на список -> {0}:*\nhttps://t.me/Massive\\_Del\\_bot?start=";
     
     public CopyLinkCommand(ITelegramBotClient botClient, ContextManager contextManager) : base(botClient, contextManager)
     {
