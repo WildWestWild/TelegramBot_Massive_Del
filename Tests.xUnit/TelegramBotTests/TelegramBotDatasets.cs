@@ -18,7 +18,8 @@ public class TelegramBotDatasets
         yield return new object[] { new TelegramBotDatasets { MessageText = "1 Это первый элемент (изменено)!", ChartId = 1, ExpectedMessageText = "Элемент изменён!" } };
         yield return new object[] { new TelegramBotDatasets { MessageText = "Завершить действие", ChartId = 1, ExpectedMessageText = "Действие завершено!" } };
         yield return new object[] { new TelegramBotDatasets { MessageText = "Удали элемент", ChartId = 1, ExpectedMessageText = "Введите номер элемента:" } };
-        yield return new object[] { new TelegramBotDatasets { MessageText = "2", ChartId = 1, ExpectedMessageText = "Элемент удалён!" } };
+        yield return new object[] { new TelegramBotDatasets { MessageText = "2", ChartId = 1, ExpectedMessageText = "Элемент выбран для удаления!" } };
+        yield return new object[] { new TelegramBotDatasets { MessageText = "Завершить действие", ChartId = 1, ExpectedMessageText = "Действие завершено!" } };
     }
     
     public static IEnumerable<object[]> GetOperationsWithPreparedList()

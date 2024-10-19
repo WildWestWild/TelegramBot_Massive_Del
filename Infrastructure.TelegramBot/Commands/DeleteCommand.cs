@@ -1,6 +1,8 @@
-﻿using Core.ListActions.ActionCommands;
+﻿using System.Collections.Concurrent;
+using Core.ListActions.ActionCommands;
 using Core.ListActions.Actions;
 using Infrastructure.TelegramBot.BotManagers;
+using Infrastructure.TelegramBot.Commands.ActionInterfaces;
 using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Helpers;
 using Infrastructure.TelegramBot.Notifications;
@@ -9,8 +11,11 @@ using Telegram.Bot;
 
 namespace Infrastructure.TelegramBot.Commands;
 
-public class DeleteCommand: BaseCommand
+public class DeleteCommand: BaseCommand, IFinishCommand
 {
+    private static ConcurrentDictionary<string, List<ushort>> _deleteSaveActions =
+        new();
+    
     private readonly DeleteElementFromListAction _deleteElementFromListAction;
     private readonly CommandValidator _commandValidator;
     private readonly NotificationManager _notificationManager;
@@ -32,10 +37,12 @@ public class DeleteCommand: BaseCommand
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
 
+        KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
+        
         if (UserContext.Command is null)
         {
             Message = "Введите номер элемента: ";
-            KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
+            
 
             AfterCommandEvent += async () =>
             {
@@ -45,9 +52,7 @@ public class DeleteCommand: BaseCommand
             await base.Process(chatId, token);
             return;
         }
-        
-        KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
-        
+
         var command = new DeleteElementCommand
         {
             ChatId = chatId,
@@ -64,9 +69,37 @@ public class DeleteCommand: BaseCommand
             return;
         }
 
-        command.Number = Convert.ToUInt16(EnterCommandText);
+        var number = Convert.ToUInt16(EnterCommandText);
+        
+        if (_deleteSaveActions.TryGetValue(UserContext.ListName, out var value))
+        {
+            if (!value.Any(r=>r.Equals(number)))
+                value.Add(number);
+        }
+        else
+        {
+            _deleteSaveActions.TryAdd(UserContext.ListName, new List<ushort> { number });
+        }
+        
+        Message = "Элемент выбран для удаления!";
 
-        string? elementForDeleteData;
+        await base.Process(chatId, token);
+        
+        _deleteElementFromListAction.OnAfterActionEvent(command);
+    }
+    
+    public async Task FinishCommandOnCancel(long chatId, CancellationToken token)
+    {
+        if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
+        
+        var command = new DeleteElementCommand
+        {
+            ChatId = chatId,
+            Name = UserContext.ListName ?? throw new ArgumentNullException(nameof(UserContext.ListName)),
+            Numbers = _deleteSaveActions[UserContext.ListName].ToArray()
+        };
+        
+        string[]? elementForDeleteData;
         if ((elementForDeleteData = await _deleteElementFromListAction.DeleteFromList(command, token)) is not null)
         {
             Message = "Элемент удалён!";
@@ -74,17 +107,13 @@ public class DeleteCommand: BaseCommand
             AfterCommandEvent += async () =>
             {
                 await ContextManager.ChangeContext(chatId, UserContext.ListName, null, token);
-                await _notificationManager.SendNotifications(UserContext, NotificationType.Remove, elementForDeleteData, command.Number);
+
+                for (var i = 0; i < command.Numbers.Length; i++)
+                    await _notificationManager.SendNotifications(UserContext, NotificationType.Remove, elementForDeleteData[i],
+                        command.Numbers[i]);
             };
+            
+            _deleteElementFromListAction.OnAfterActionEvent(command);   
         }
-        else
-        {
-            Message = "Ошибка! Элемент не был удалён.";
-            AddEventToRemoveContext(token);
-        }
-        
-        await base.Process(chatId, token);
-        
-        _deleteElementFromListAction.OnAfterActionEvent(command);
     }
 }

@@ -112,7 +112,7 @@ namespace Tests.xUnit
                 {
                     ChatId = Command.ChatId,
                     Name = Command.Name,
-                    Number = number
+                    Numbers = new [] {number}
                 }, _cancellationTokenSource.Token);
             }
             _deleteElementFromListAction.OnAfterActionEvent(Command);

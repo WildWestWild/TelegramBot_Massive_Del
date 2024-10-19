@@ -65,7 +65,7 @@ public class ReadCommand: BaseCommand
             ChatId = chatId,
             Name = uniqueListName
         };
-
+        
         var list = await _readListAction.GetList(command, token);
         if (list is null)
         {

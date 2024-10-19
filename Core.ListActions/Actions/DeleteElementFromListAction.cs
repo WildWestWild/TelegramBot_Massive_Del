@@ -17,17 +17,24 @@ public class DeleteElementFromListAction: BaseAction
         _logger = logger;
     }
 
-    public async Task<string?> DeleteFromList(DeleteElementCommand command, CancellationToken token)
+    public async Task<string[]?> DeleteFromList(DeleteElementCommand command, CancellationToken token)
     {
         try
         {
             var userInfo = await _readListAction.AddUserInfoWithElementsInContext(command, token);
 
-            var elementForDelete = userInfo.UserListElements.First(r => r.Number.Equals(command.Number));
-            
-            userInfo.UserListElements.Remove(elementForDelete);
+            var deleteDataElements = new string[command.Numbers?.Length ?? throw new ArgumentNullException(nameof(command.Numbers))];
 
-            userInfo.CountSymbolsInList -= elementForDelete.Data.Length;
+            for (var i = 0; i < command.Numbers.Length; i++)
+            {
+                var elementForDelete = userInfo.UserListElements.First(r => r.Number.Equals(command.Numbers[i]));
+            
+                userInfo.UserListElements.Remove(elementForDelete);
+                
+                userInfo.CountSymbolsInList -= elementForDelete.Data.Length;
+
+                deleteDataElements[i] = elementForDelete.Data;
+            }
 
             var elements = userInfo.UserListElements
                 .OrderBy(r=>r.Number)
@@ -35,7 +42,7 @@ public class DeleteElementFromListAction: BaseAction
             
             for (ushort i = 0; i < elements.Length; i++)
             {
-                elements[i].Number = (ushort)(i + 1);
+                elements[i].Number = (ushort)(i + 1);   
             }
             
             AfterActionEvent += (identificator) =>
@@ -43,11 +50,11 @@ public class DeleteElementFromListAction: BaseAction
                 _readListAction.ResetCache(identificator);
             };
 
-            return (await _db.SaveChangesAsync(token) > 0) ? elementForDelete.Data : null;
+            return (await _db.SaveChangesAsync(token) > 0) ? deleteDataElements : null;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"[{nameof(DeleteFromList)}] Delete element failed for command. ChatId = {command.ChatId}, Name = {command.Name}, Number = {command.Number}");
+            _logger.LogError(e, $"[{nameof(DeleteFromList)}] Delete element failed for command. ChatId = {command.ChatId}, Name = {command.Name}, Numbers = {string.Join(',', command.Numbers)}");
             return null;
         }
     }

@@ -17,7 +17,10 @@ public class CommandFactory
         _serviceProvider = serviceProvider;
         _contextManager = contextManager;
     }
-    
+
+    public BaseCommand CreateCommand(CommandType commandType, UserContext userContext)
+        => CreateCommand(commandType, userContext, out BaseCommand command) ? command : CreateNotFoundCommand();
+
     public async ValueTask<BaseCommand> CreateCommand(string message, long charId, CancellationToken token)
     {
         if (CreateReadListCommand(message, out var readListCommand))
@@ -57,8 +60,6 @@ public class CommandFactory
         return cancelCommand;
     }
     
-    
-
     private bool CreateCommand(CommandType? enumCommand, UserContext? context, out BaseCommand command)
     {
         var commandType = enumCommand switch
