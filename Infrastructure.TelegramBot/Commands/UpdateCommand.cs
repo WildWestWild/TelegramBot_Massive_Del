@@ -47,7 +47,7 @@ public class UpdateCommand: BaseCommand
         
         if (await _commandValidator.CheckMaxCountSymbolsInList(EnterCommandText, command, token))
         {
-            Message = "Невозможно добавить элемент, слишком много символов в списке!";
+            Message = ConstantHelper.ManySymbolsInUpdateCommand;
 
             KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
             
@@ -59,7 +59,7 @@ public class UpdateCommand: BaseCommand
         
         if (UserContext.Command is null)
         {
-            Message = "Введите номер элемента и текст в формате - Номер элемента, пробел, текст. Например: (3 Привет,Мир!)";
+            Message = ConstantHelper.InputElemInUpdateCommand;
 
             AfterCommandEvent += async () =>
             {
@@ -74,7 +74,7 @@ public class UpdateCommand: BaseCommand
 
         if (!match.Success || await CheckInvalidNumber(match, command, token))
         {
-            Message = "Некорректный номер элемента! ";
+            Message = ConstantHelper.IncorrectNumberInUpdateCommand;
             
             await base.Process(chatId, token);
             return;
@@ -85,7 +85,7 @@ public class UpdateCommand: BaseCommand
 
         if (await _updateElementFromListAction.UpdateFromList(command, token))
         {
-            Message = "Элемент изменён!";
+            Message = ConstantHelper.SuccessInUpdateCommand;
 
             AfterCommandEvent += async () =>
             {
@@ -94,7 +94,7 @@ public class UpdateCommand: BaseCommand
         }
         else
         {
-            Message = "Ошибка! Элемент не был изменён.";
+            Message = ConstantHelper.ErrorInUpdateCommand;
 
             AddEventToRemoveContext(token);
         }

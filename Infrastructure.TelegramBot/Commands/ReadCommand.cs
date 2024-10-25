@@ -69,7 +69,7 @@ public class ReadCommand: BaseCommand
         var list = await _readListAction.GetList(command, token);
         if (list is null)
         {
-            Message = @"Данный список не найден!";
+            Message = ConstantHelper.NotFoundMessageInReadCommand;
             KeyboardMarkup = KeyboardHelper.GetStartKeyboard();
             await base.Process(chatId, token);
             return;
@@ -77,7 +77,7 @@ public class ReadCommand: BaseCommand
         
         if (!list.Any())
         {
-            Message = @"Данный список не может быть отображен, так как в нём нет элементов. Попробуйте их добавить через виртуальную клавиатуру бота!";
+            Message = ConstantHelper.ItCannotShowInReadCommand;
             KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(uniqueListName);
             await base.Process(chatId, token);
             return;

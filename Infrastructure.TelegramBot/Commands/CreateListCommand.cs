@@ -26,7 +26,7 @@ public class CreateListCommand : BaseCommand
     {
         if (UserContext is null || UserContext.ListName is not null)
         {
-            Message = "Введите название списка: ";
+            Message = ConstantHelper.InputListNameInCreateListCommand;
             KeyboardMarkup = KeyboardHelper.GetCancelKeyboard();
 
             AfterCommandEvent += async () =>
@@ -47,7 +47,7 @@ public class CreateListCommand : BaseCommand
 
         if (await _addListAction.AddList(addListCommand, token))
         {
-            Message = $"Список с названием '{uniqueListName.GetOnlyListName()}' успешно создан! \n(В списке не может быть более 15-ти тысяч символов)";
+            Message = ConstantHelper.SuccessCreatingInCreateListCommand(uniqueListName.GetOnlyListName());
             KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(uniqueListName);
 
             AfterCommandEvent += async () =>
@@ -58,7 +58,7 @@ public class CreateListCommand : BaseCommand
         }
         else
         {
-            Message = $"Ошибка! Список '{EnterCommandText}' не был добавлен. Возможно стоит попробовать ещё раз.";
+            Message = ConstantHelper.ErrorCreatingInCreateListCommand(EnterCommandText);
             KeyboardMarkup = KeyboardHelper.GetStartKeyboard();
 
             AfterCommandEvent += async () => { await ContextManager.RemoveContext(UserContext, token); };

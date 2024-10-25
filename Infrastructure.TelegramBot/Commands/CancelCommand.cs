@@ -28,7 +28,7 @@ public class CancelCommand: BaseCommand
             ? KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName)
             : KeyboardHelper.GetStartKeyboard();
         
-        Message += "Действие завершено!";
+        Message = ConstantHelper.DoneActionInCancelCommand;
 
         if (UserContext is not null)
         {

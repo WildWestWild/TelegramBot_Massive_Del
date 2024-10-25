@@ -15,7 +15,7 @@ public class NotFoundCommand: BaseCommand
     public override Task Process(long chatId, CancellationToken token)
     {
         Message =
-            "Извините, но это неизвестная для меня команда, пожалуйста, введите команду из меню, либо с виртуальной клавиатуры.";
+            ConstantHelper.NotFoundMessageInNotFoundCommand;
 
         KeyboardMarkup = KeyboardHelper.GetStartKeyboard();
         

@@ -41,7 +41,7 @@ public class AddCommand : BaseCommand
         
         if (await _commandValidator.CheckMaxCountSymbolsInList(EnterCommandText, command, token))
         {
-            Message = "Невозможно добавить элемент, слишком много символов в списке!";
+            Message = ConstantHelper.CannotAddElemInAddCommand;
 
             KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
             
@@ -53,7 +53,7 @@ public class AddCommand : BaseCommand
 
         if (UserContext.Command is null)
         {
-            Message = "Введите элемент (чтобы выйти из режима записи в список, нажмите 'Завершить действие'):";
+            Message = ConstantHelper.InputElemInAddCommand;
 
             AfterCommandEvent += async () =>
             {
@@ -66,7 +66,7 @@ public class AddCommand : BaseCommand
 
         if (await _addElementToListAction.AddElement(command, token))
         {
-            Message = "Элемент добавлен!";
+            Message = ConstantHelper.SuccessAddElemInAddCommand;
             
             AfterCommandEvent += async () =>
             {
@@ -75,7 +75,7 @@ public class AddCommand : BaseCommand
         }
         else
         {
-            Message = "Ошибка! Элемент не был добавлен.";
+            Message = ConstantHelper.ErrorCommandElemInAddCommand;
 
             AddEventToRemoveContext(token);
         }

@@ -41,7 +41,7 @@ public class DeleteCommand: BaseCommand, IFinishCommand
         
         if (UserContext.Command is null)
         {
-            Message = "Введите номер элемента: ";
+            Message = ConstantHelper.InputListNameInDeleteListCommand;
             
 
             AfterCommandEvent += async () =>
@@ -61,7 +61,7 @@ public class DeleteCommand: BaseCommand, IFinishCommand
         
         if (await _commandValidator.CheckInvalidNumber(EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText)), command, token))
         {
-            Message = "Некорректный номер элемента! ";
+            Message = ConstantHelper.IncorrectNumberInDeleteListCommand;
 
             AddEventToRemoveContext(token);
 
@@ -81,7 +81,7 @@ public class DeleteCommand: BaseCommand, IFinishCommand
             _deleteSaveActions.TryAdd(UserContext.ListName, new List<ushort> { number });
         }
         
-        Message = "Элемент выбран для удаления!";
+        Message = ConstantHelper.PickNumberInDeleteListCommand;
 
         await base.Process(chatId, token);
         
@@ -102,7 +102,7 @@ public class DeleteCommand: BaseCommand, IFinishCommand
         string[]? elementForDeleteData;
         if ((elementForDeleteData = await _deleteElementFromListAction.DeleteFromList(command, token)) is not null)
         {
-            Message = "Элемент удалён!";
+            Message = ConstantHelper.DoneActionInDeleteListCommand;
 
             AfterCommandEvent += async () =>
             {

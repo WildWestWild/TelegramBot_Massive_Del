@@ -38,7 +38,7 @@ public class StrikingOutCommand: BaseCommand
         
         if (UserContext.Command is null)
         {
-            Message = "Введите номер элемента: \n ! Чтобы выйти из режима записи в список, нажмите 'Завершить действие' ! \n ! Если хотите отменить вычеркивание, используйте это действия на вычеркнутый элемент !";
+            Message = ConstantHelper.EnterElemInStrikingOutCommand;
             
             AfterCommandEvent += async () =>
             {
@@ -57,7 +57,7 @@ public class StrikingOutCommand: BaseCommand
         
         if (await _commandValidator.CheckInvalidNumber(EnterCommandText ?? throw new ArgumentNullException(nameof(EnterCommandText)), command, token))
         {
-            Message = "Некорректный номер элемента! ";
+            Message = ConstantHelper.WrongNumberInStrikingOutCommand;
             
             await base.Process(chatId, token);
             return;
@@ -67,7 +67,7 @@ public class StrikingOutCommand: BaseCommand
         string? dataElement;
         if ((dataElement = await _strikingOutElementAction.StrikingOutElement(command, token)) is not null)
         {
-            Message = "Элемент вычеркнут!";
+            Message = ConstantHelper.StrikingNumberInStrikingOutCommand;
 
             AfterCommandEvent += async () =>
             {
@@ -76,7 +76,7 @@ public class StrikingOutCommand: BaseCommand
         }
         else
         {
-            Message = "Ошибка! Элемент не был вычеркнут.";
+            Message = ConstantHelper.ErrorInStrikingOutCommand;
             AddEventToRemoveContext(token);
         }
         

@@ -14,7 +14,7 @@ public class StartCommand: BaseCommand
 
     public override Task Process(long chatId, CancellationToken token)
     {
-        Message = "Давайте начнём!";
+        Message = ConstantHelper.StartCommandMessage;
 
         KeyboardMarkup = KeyboardHelper.GetStartKeyboard();
         

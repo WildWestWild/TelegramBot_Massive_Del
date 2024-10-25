@@ -37,7 +37,7 @@ public class GetHistoryCommand: BaseCommand
     private string PrepareUserListHistoriesToMarkdownV2Message(UserListHistory[] userListHistories)
     {
         if (userListHistories.Length.Equals(0))
-            return "Нет истории использованных списков. Создавайте списки, либо переходите по ссылке и проссматривайте списки других.";
+            return ConstantHelper.DontHaveListsInGetHistoryCommand;
         
         StringBuilder message = new StringBuilder();
         foreach (var item in userListHistories)
