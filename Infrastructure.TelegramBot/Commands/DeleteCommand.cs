@@ -41,9 +41,8 @@ public class DeleteCommand: BaseCommand, IFinishCommand
         
         if (UserContext.Command is null)
         {
-            Message = ConstantHelper.InputListNameInDeleteListCommand;
+            Message = ConstantHelper.InputNumberInDeleteListCommand;
             
-
             AfterCommandEvent += async () =>
             {
                 await ContextManager.ChangeContext(chatId, UserContext.ListName, CommandType.DeleteElement, token);

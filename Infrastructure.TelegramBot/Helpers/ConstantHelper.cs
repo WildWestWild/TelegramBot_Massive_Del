@@ -36,7 +36,7 @@ public static class ConstantHelper
 
     #region DeleteCommandMessage
 
-    public static readonly string InputListNameInDeleteListCommand =  "Введите название списка: ";
+    public static readonly string InputNumberInDeleteListCommand =  "Введите номер элемента: ";
     
     public static readonly string IncorrectNumberInDeleteListCommand =  "Некорректный номер элемента! ";
     

@@ -51,14 +51,14 @@ public class TelegramBotCommandTests
 
     private async Task ProcessCommandTest(string commandText, long chatId, string expectedMessageText)
     {
-        _logger.LogInformation($"CommandText = [{commandText}], ChatId = [{chatId}], Expected = [{expectedMessageText}]");
+        _logger.LogInformation("CommandText = [{CommandText}], ChatId = [{ChatId}], Expected = [{ExpectedMessageText}]", commandText, chatId, expectedMessageText);
         var command = await _commandFactory.CreateCommand(commandText, chatId, _cts.Token);
         await command.Process(chatId, _cts.Token);
         command.OnAfterCommandEvent();
-        _logger.LogInformation($"CommandType = [{command.GetType().Name}], Actual = [{command.Message}]");
+        _logger.LogInformation("CommandType = [{Name}], Actual = [{CommandMessage}]", command.GetType().Name, command.Message);
         Assert.Contains(expectedMessageText, command.Message);
-        _logger.LogInformation($"UserContext = {JsonSerializer.Serialize(_context.UserContexts.FirstOrDefault(r=>r.ChatId.Equals(chatId)) ?? default, _serializerOptions)}");
-        _logger.LogInformation($"UserInfo = {JsonSerializer.Serialize(_context.UserListInfos.FirstOrDefault(r=>r.ChatId.Equals(chatId)) ?? default, _serializerOptions)}");
+        _logger.LogInformation("UserContext = {Serialize}", JsonSerializer.Serialize(_context.UserContexts.FirstOrDefault(r=>r.ChatId.Equals(chatId)) ?? default, _serializerOptions));
+        _logger.LogInformation("UserInfo = {Serialize}", JsonSerializer.Serialize(_context.UserListInfos.FirstOrDefault(r=>r.ChatId.Equals(chatId)) ?? default, _serializerOptions));
     }
   
     [Theory]
