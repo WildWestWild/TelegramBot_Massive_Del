@@ -71,7 +71,7 @@ public class StrikingOutCommand: BaseCommand
 
             AfterCommandEvent += async () =>
             {
-                await _notificationManager.SendNotifications(UserContext, NotificationType.StrikingOut, dataElement);
+                await _notificationManager.SendNotifications(UserContext, NotificationType.StrikingOut, dataElement, command.Number);
             };
         }
         else
