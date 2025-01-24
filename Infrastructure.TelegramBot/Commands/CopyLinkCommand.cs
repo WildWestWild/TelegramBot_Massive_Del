@@ -18,7 +18,7 @@ public class CopyLinkCommand: BaseCommand
     {
         if (UserContext?.ListName is null) throw new ArgumentNullException(nameof(UserContext));
 
-        Message = UserContext.ListName.GetLink();
+        Message = UserContext.ListName.GetLinkWithDescription();
         KeyboardMarkup = KeyboardHelper.GetKeyboardForConcreteList(UserContext.ListName);
 
         return base.Process(chatId, token);

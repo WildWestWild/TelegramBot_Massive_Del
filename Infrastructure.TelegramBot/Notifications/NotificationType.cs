@@ -5,5 +5,6 @@ public enum NotificationType
     Add,
     Update,
     Remove,
-    StrikingOut
+    StrikingOut,
+    CancelStringOut
 }

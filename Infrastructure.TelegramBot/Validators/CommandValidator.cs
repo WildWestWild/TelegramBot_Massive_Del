@@ -25,4 +25,10 @@ public class CommandValidator
         var countSymbolsInMessage = message.Length;
         return countSymbolsInMessage + await _readListAction.GetCountSymbolsInList(commandIdentificator, token) > MAX_COUNT_SYMBOLS;
     }
+
+    public async Task<bool> CheckSameDataElement(string message, ICommandIdentificator commandIdentificator, CancellationToken token)
+    {
+        var list = await _readListAction.GetList(commandIdentificator, token);
+        return list?.Any(r=>string.Equals(message, r.Data, StringComparison.OrdinalIgnoreCase)) ?? false;
+    }
 }

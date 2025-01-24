@@ -13,6 +13,51 @@ public class NotificationManager
     private readonly IDbContext _db;
     private readonly ITelegramBotClient _botClient;
 
+    private const string ADD_NOTIFICATION_TEMPLATE = @"
+<b>Добавлен элемент в: </b> <u>{0}</u>
+
+<b>Текст элемента:</b> {1}
+
+<b>Перейти -> </b> {2}";
+    
+    private const string UPDATE_NOTIFICATION_TEMPLATE = @"
+<b>Изменен элемент в: </b> <u>{0}</u>
+
+<b>Номер элемента: </b> {1} 
+
+<b>Текст элемента:</b> {2}
+
+<b>Перейти -> </b> {3}";
+    
+    private const string REMOVE_NOTIFICATION_TEMPLATE = @"
+<b>Удален элемент из: </b> <u>{0}</u>
+
+<b>Номер элемента: </b> {1} 
+
+<b>Текст элемента:</b> {2}
+
+<b>Перейти -> </b> {3}";
+    
+    private const string STRIKINGOUT_POSITIVE_NOTIFICATION_TEMPLATE = @"
+<b>Вычеркнут элемент из: </b> <u>{0}</u>
+
+<b>Номер элемента: </b> {1} 
+
+<b>Текст элемента:</b> {2}
+
+<b>Перейти -> </b> {3}";
+    
+    private const string STRIKINGOUT_CANCEL_NOTIFICATION_TEMPLATE = @"
+<b>Отменено вычеркивание элемента из: </b> <u>{0}</u>
+
+<b>Номер элемента: </b> {1} 
+
+<b>Текст элемента:</b> {2}     
+
+<b>Перейти -> </b> {3}";
+    
+    public static readonly string BotLinkWithoutGuidId = "https://t.me/Massive\\_Del\\_bot?start=";
+
     public NotificationManager(IDbContext db, ITelegramBotClient botClient)
     {
         _db = db;
@@ -31,17 +76,18 @@ public class NotificationManager
                 chatId: chatId,
                 text: GenerateMessageForNotification(context, notificationType, notificationData, numberOfElement),
                 cancellationToken: token,
-                parseMode: ParseMode.Html
+                parseMode: ParseMode.Markdown
             )));
     }
 
     private string GenerateMessageForNotification(UserContext context, NotificationType notificationType, string notificationData, long? numberOfElement = null) =>
         notificationType switch
         {
-            NotificationType.Add => $"В {context.ListName?.GetOnlyListName() ?? throw new ArgumentException(nameof(context.ListName))} добавлен элемент: \n {notificationData}. \n Ссылка на список: \n {context.ListName.GetLink()}",
-            NotificationType.Update => $"В {context.ListName?.GetOnlyListName() ?? throw new ArgumentException(nameof(context.ListName))} обновлен элемент под номером {numberOfElement}. \n  Текст изменён на: {notificationData}. \n Ссылка на список: \n {context.ListName.GetLink()}",
-            NotificationType.Remove => $"В {context.ListName?.GetOnlyListName() ?? throw new ArgumentException(nameof(context.ListName))} удален элемент под номером {numberOfElement}. \n Текст удаленного элемента: {notificationData}. \n Ссылка на список: \n {context.ListName.GetLink()}",
-            NotificationType.StrikingOut =>$"В {context.ListName?.GetOnlyListName() ?? throw new ArgumentException(nameof(context.ListName))} вычеркнут элемент под номером {numberOfElement}. \n Текст удаленного элемента: {notificationData}. \n Ссылка на список: \n {context.ListName.GetLink()}",
+            NotificationType.Add => string.Format(ADD_NOTIFICATION_TEMPLATE, context.ListName?.GetOnlyListName() ?? throw new ArgumentException(nameof(context.ListName)), notificationData, context.ListName.GetLink()),
+            NotificationType.Update => string.Format(UPDATE_NOTIFICATION_TEMPLATE, context.ListName?.GetOnlyListName() ?? throw new ArgumentException(nameof(context.ListName)), numberOfElement, notificationData, context.ListName.GetLink()),
+            NotificationType.Remove => string.Format(REMOVE_NOTIFICATION_TEMPLATE, context.ListName?.GetOnlyListName() ?? throw new ArgumentException(nameof(context.ListName)), numberOfElement, notificationData, context.ListName.GetLink()),
+            NotificationType.StrikingOut => string.Format(STRIKINGOUT_POSITIVE_NOTIFICATION_TEMPLATE, context.ListName?.GetOnlyListName() ?? throw new ArgumentException(nameof(context.ListName)), numberOfElement, notificationData, context.ListName.GetLink()),
+            NotificationType.CancelStringOut => string.Format(STRIKINGOUT_CANCEL_NOTIFICATION_TEMPLATE, context.ListName?.GetOnlyListName() ?? throw new ArgumentException(nameof(context.ListName)), numberOfElement, notificationData, context.ListName.GetLink()),
             _ => throw new ArgumentOutOfRangeException(nameof(notificationType), notificationType, null)
         };
 }

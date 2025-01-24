@@ -44,7 +44,7 @@ public class GetHistoryCommand: BaseCommand
         {
             message.Append($"Название: {item.ListName.GetOnlyListName()} \n");
             message.Append($"Последнее использование: {item.LastUseDate.ToString("d").Replace('/', '.')} \n");
-            message.Append($"{item.ListName.GetLink()} \n \n");
+            message.Append($"{item.ListName.GetLinkWithDescription()} \n \n");
         }
 
         return message.ToString();

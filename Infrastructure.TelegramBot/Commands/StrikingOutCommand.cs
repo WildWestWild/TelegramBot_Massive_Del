@@ -1,5 +1,6 @@
 ﻿using Core.ListActions.ActionCommands;
 using Core.ListActions.Actions;
+using Infrastructure.Storage.Models;
 using Infrastructure.TelegramBot.BotManagers;
 using Infrastructure.TelegramBot.Enums;
 using Infrastructure.TelegramBot.Helpers;
@@ -64,14 +65,18 @@ public class StrikingOutCommand: BaseCommand
         }
 
         command.Number = Convert.ToUInt16(EnterCommandText);
-        string? dataElement;
-        if ((dataElement = await _strikingOutElementAction.StrikingOutElement(command, token)) is not null)
+        UserListElement? element;
+        if ((element = await _strikingOutElementAction.StrikingOutElement(command, token)) is not null)
         {
             Message = ConstantHelper.StrikingNumberInStrikingOutCommand;
 
             AfterCommandEvent += async () =>
             {
-                await _notificationManager.SendNotifications(UserContext, NotificationType.StrikingOut, dataElement, command.Number);
+                var notificationType = element.IsStrikingOut
+                    ? NotificationType.StrikingOut
+                    : NotificationType.CancelStringOut;
+                
+                await _notificationManager.SendNotifications(UserContext, notificationType, element.Data, command.Number);
             };
         }
         else

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Core.ListActions.ActionCommands;
 using Infrastructure.Storage.DbContext;
+using Infrastructure.Storage.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Core.ListActions.Actions;
@@ -18,7 +19,7 @@ public class StrikingOutElementAction: BaseAction
         _logger = logger;
     }
     
-    public async Task<string?> StrikingOutElement(AddOrUpdateElementCommand command, CancellationToken token)
+    public async Task<UserListElement?> StrikingOutElement(AddOrUpdateElementCommand command, CancellationToken token)
     {
         try
         {
@@ -33,11 +34,11 @@ public class StrikingOutElementAction: BaseAction
             
             
             
-            return (await _db.SaveChangesAsync(token) > 0) ? element.Data : null;
+            return (await _db.SaveChangesAsync(token) > 0) ? element : null;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, $"[{nameof(StrikingOutElement)}] Fail to striking out. Command = {JsonSerializer.Serialize(command)}");
+            _logger.LogError(e, "[{StrikingOutElementName}] Fail to striking out. Command = {Serialize}", nameof(StrikingOutElement), JsonSerializer.Serialize(command));
             return null;
         }
     }
